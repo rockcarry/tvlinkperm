@@ -23,7 +23,7 @@ strLoginPageName  = "login.asp"     // 管理页面名，如果修改了 login.asp 的名称，
 bSaveVisitRecord  = true            // 是否保存访问记录
 nDataBaseType     = 1               // 数据库类型，1-access, 2/3-sqlserver
 nWriteOutType     = 1               // 频道数据写出方式 1-write binary 方式，2-重定向方式
-nTablePageSize    = 20
+nTablePageSize    = 10
 
 数据库初始化
 strAccessDBFile  = "tvbox.mdb"         // access 数据库文件名

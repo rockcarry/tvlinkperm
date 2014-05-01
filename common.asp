@@ -21,7 +21,7 @@
     bSaveVisitRecord  = true
     nDataBaseType     = 1
     nWriteOutType     = 1
-    nTablePageSize    = 20
+    nTablePageSize    = 10
 
     dim strAccessDBFile
     dim strAccessDBPWD
@@ -35,7 +35,7 @@
     strAccessDBPWD   = "www.tvbox.com"
 
     'sqlserver
-    strSQLServerHost = "localhost"
+    strSQLServerHost = "WIN-GDONNGTOTGF\LOOLBOX_4_29"
     strSQLServerUSER = "sa"
     strSQLServerPWD  = "Loolbox2014"
     strSQLServerDBN  = "looltv_content"
