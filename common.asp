@@ -1,0 +1,112 @@
+<%
+    option explicit
+
+    dim strChannelXmlPath
+    dim strIPLocTableTxt
+    dim strMACTableTxt
+    dim strAdminLoginPwd
+    dim strAdminPageName
+    dim strLoginPageName
+    dim bSaveVisitRecord
+    dim nDataBaseType
+    dim nWriteOutType
+    dim nTablePageSize
+
+    strChannelXmlPath = "channel.xml"
+    strIPLocTableTxt  = "iptable.txt"
+    strMACTableTxt    = "mactable.txt"
+    strAdminLoginPwd  = "www.tvbox.com"
+    strAdminPageName  = "admin.asp"
+    strLoginPageName  = "login.asp"
+    bSaveVisitRecord  = true
+    nDataBaseType     = 1
+    nWriteOutType     = 1
+    nTablePageSize    = 20
+
+    dim strAccessDBFile
+    dim strAccessDBPWD
+    dim strSQLServerHost
+    dim strSQLServerUSER
+    dim strSQLServerPWD
+    dim strSQLServerDBN
+
+    'access
+    strAccessDBFile  = "tvbox.mdb"
+    strAccessDBPWD   = "www.tvbox.com"
+
+    'sqlserver
+    strSQLServerHost = "localhost"
+    strSQLServerUSER = "sa"
+    strSQLServerPWD  = "Loolbox2014"
+    strSQLServerDBN  = "looltv_content"
+
+    dim strconn
+    select case nDataBaseType
+    case 1
+        strconn = "dbq=" & Server.MapPath(strAccessDBFile) & ";"
+        strconn = strconn & "driver={microsoft access driver (*.mdb)};"
+        strconn = strconn & "pwd=" & strAccessDBPWD
+    case 2
+        strconn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & Server.MapPath(strAccessDBFile) & ";"
+        strconn = strconn & "Persist Security Info=false;Jet OLEDB:Database Password=" & strAccessDBPWD
+    case 3
+        strconn = "Driver={SQL Server};SERVER=" & strSQLServerHost & ";"
+        strconn = strconn & "DATABASE=" & strSQLServerDBN & ";"
+        strconn = strconn & "UID=" & strSQLServerUSER & ";"
+        strconn = strconn & "PWD=" & strSQLServerPWD
+    case 4
+        strconn = "provider=sqloledb;"
+        strconn = strconn & "data source=" & strSQLServerHost & ";"
+        strconn = strconn & "initial catalog=" & strSQLServerDBN & ";"
+        strconn = strconn & "user id=" & strSQLServerUSER & ";"
+        strconn = strconn & "password=" & strSQLServerPWD
+    end select
+
+    '++数据库连接++'
+    dim conn
+    sub OpenConn()
+        set conn = Server.CreateObject("ADODB.Connection")
+        conn.Open strconn
+    end sub
+
+    sub CloseConn()
+        conn.Close
+        set conn = nothing
+    end sub
+    '--数据库连接--'
+
+    dim strOptrCur
+    dim strOptrAdminLogin
+    dim strOptrAdminLogout
+    dim strOptrResetDatabase
+    dim strOptrImportIPTable
+    dim strOptrImportMACTable
+    dim strOptrAddVisitRule
+    dim strOptrDeleteVisitRule
+    dim strOptrModifyVisitRulePage
+    dim strOptrModifyVisitRuleDoIt
+    dim strOptrClearVisitRule
+    dim strOptrDeleteVisitRecord
+    dim strOptrClearVisitRecord
+    dim strOptrVisitRecordCond
+    dim strOptrTablePageSubmit
+
+
+    strOptrCur                = Request("optr")
+    strOptrAdminLogin         = "1"
+    strOptrAdminLogout        = "2"
+    strOptrResetDatabase      = "3"
+    strOptrImportIPTable      = "4"
+    strOptrImportMACTable     = "5"
+    strOptrAddVisitRule       = "6"
+    strOptrDeleteVisitRule    = "7"
+    strOptrModifyVisitRulePage= "8"
+    strOptrModifyVisitRuleDoIt= "9"
+    strOptrClearVisitRule     = "a"
+    strOptrDeleteVisitRecord  = "b"
+    strOptrClearVisitRecord   = "c"
+    strOptrVisitRecordCond    = "d"
+    strOptrTablePageSubmit    = "e"
+
+%>
+

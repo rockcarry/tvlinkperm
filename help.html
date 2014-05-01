@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+  Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+  <meta http-equiv="Content-Language" content="zh-cn" />
+  <title>使用说明</title>
+</head>
+
+<body>
+<h1>访问规则配置说明</h1>
+<hr/>
+
+<h3>IP: 192.168.1.100  MAC: 12:34:56:78:9A:BC </h3>
+<p>
+IP 和 MAC 都有具体的指定，这样的规则是优先级最高的，如果权限配置为 true，那么该 IP 和 MAC 组合在访问 channel.asp 是可以取得频道数据的。若权限配置为 false 则是没有权限的。<br/><br/>
+</p>
+
+<h3>IP: * MAC: 12:34:56:78:9A:BC </h3>
+<p>
+IP 没有具体指定，MAC 有具体指定，这样的规则，优先级次之。如果权限配置为 true，其意义是，对于 MAC 为 12:34:56:78:9A:BC 的机器，在任何 IP 地址下都是可以取得频道数据。若权限配置为 false 则是没有权限的。<br/><br/>
+</p>
+
+<h3>IP: 192.168.1.100 MAC: * </h3>
+<p>
+IP 有具体指定，MAC 没有具体指定，这样的规则，优先级再次之。如果权限配置为 true，其意义是，对于 IP 为 192.168.1.100 的机器，无论其 MAC 是多少都是可以取得频道数据。若权限配置为 false 则是没有权限的。<br/><br/>
+</p>
+
+<h3>IP: * MAC: * </h3>
+<p>
+这样的规则优先级再次之，如果权限配置为 true，其意义是任何 IP 和 MAC 的组合都可以取得频道数据。若权限配置为 false 则任何 IP 和 MAC 的组合都无法取得频道数据。<br/><br/>
+</p>
+
+<h3>最后的规则</h3>
+<p>
+最后的规则，就来源于 IP 的位置信息，目前的逻辑是，如果 IP 的位置在中国的话，是没有权限获取频道数据的。<br/>
+以上规则可以同时存在，频道请求处理程序，会按照以上的优先级进行处理。实际使用时可以根据需求进行灵活配置。<br/><br/>
+</p>
+
+<h3>频道数据请求接口</h3>
+<p>
+channel.asp?mac=12:34:56:78:9a:bc
+这样的链接为频道数据请求接口，其中 ?mac= 为客户端必须送给服务器的变量，代表客户端的 MAC 地址。如果客户请求时不传 mac 地址，即客户端直接请求 channel.asp 那么服务器自动认为 mac 地址为 00:00:00:00:00:00. 这种情况下可以在访问规则中对 IP * + MAC 00:00:00:00:00:00 进行权限控制。<br/><br/>
+</p>
+
+<hr/>
+<p>
+rockcarry<br/>
+2014-4-26<br/>
+</p>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
