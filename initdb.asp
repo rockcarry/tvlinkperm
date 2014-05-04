@@ -10,12 +10,15 @@
         set fs = Server.CreateObject("Scripting.FileSystemObject")
         set txt= fs.OpenTextFile(Server.MapPath(url))
         set rs = Server.CreateObject("ADODB.recordset")
-        on error resume next
-        conn.Execute("DELETE FROM IPLocationTable")
+        if nDataBaseType = 1 or nDataBaseType = 2 then
+            conn.Execute("DELETE FROM IPLocationTable")
+        else
+            conn.Execute("TRUNCATE TABLE IPLocationTable")
+        end if
         sql = "SELECT * FROM IPLocationTable"
         rs.Open sql, conn, 1, 3
         do while not txt.AtEndOfStream
-            line = txt.ReadLine()
+            line = trim(txt.ReadLine())
             if line <> "" then
                 items= split(line, chr(9))
                 rs.AddNew()
@@ -24,9 +27,9 @@
                 rs("STR_IP_START") = items(2)
                 rs("STR_IP_END"  ) = items(3)
                 rs("LOCATION"    ) = items(4)
-                rs.Update()
             end if
         loop
+        rs.Update()
         rs.Close()
         txt.Close()
         set rs = nothing
@@ -39,8 +42,11 @@
         set fs = Server.CreateObject("Scripting.FileSystemObject")
         set txt= fs.OpenTextFile(Server.MapPath(url))
         set rs = Server.CreateObject("ADODB.recordset")
-        on error resume next
-        conn.Execute("DELETE FROM PermittedMACTable")
+        if nDataBaseType = 1 or nDataBaseType = 2 then
+            conn.Execute("DELETE FROM PermittedMACTable")
+        else
+            conn.Execute("TRUNCATE TABLE PermittedMACTable")
+        end if
         sql = "SELECT * FROM PermittedMACTable"
         rs.Open sql, conn, 1, 3
         do while not txt.AtEndOfStream
@@ -48,9 +54,9 @@
             if line <> "" then
                 rs.AddNew()
                 rs("MAC") = line
-                rs.Update()
             end if
         loop
+        rs.Update()
         rs.Close()
         txt.Close()
         set rs = nothing

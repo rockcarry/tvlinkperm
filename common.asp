@@ -19,8 +19,8 @@
     strAdminPageName  = "admin.asp"
     strLoginPageName  = "login.asp"
     bSaveVisitRecord  = true
-    nDataBaseType     = 1
-    nWriteOutType     = 3
+    nDataBaseType     = 2
+    nWriteOutType     = 1
     nTablePageSize    = 10
 
     dim strAccessDBFile
