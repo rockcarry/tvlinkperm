@@ -1,0 +1,8 @@
+<script language="vbscript" runat="server">
+
+sub Application_OnStart
+    application("ChannelFileData") = ""
+    application("ChannelFileSize") = 0
+end sub
+
+</script>

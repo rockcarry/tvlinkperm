@@ -186,6 +186,9 @@
 -->
 &nbsp;<a href="initdb.asp?optr=<%=strOptrImportIPTable%>">[导入IP地址库]</a>
 &nbsp;<a href="initdb.asp?optr=<%=strOptrImportMACTable%>">[导入MAC授权库]</a>
+<% if nWriteOutType = 3 then %>
+&nbsp;<a href="initdb.asp?optr=<%=strOptrImportChannelData%>">[导入频道数据]</a>
+<% end if %>
 <hr/>
 
 <h2>访问规则</h2>

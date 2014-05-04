@@ -20,7 +20,7 @@
     strLoginPageName  = "login.asp"
     bSaveVisitRecord  = true
     nDataBaseType     = 1
-    nWriteOutType     = 1
+    nWriteOutType     = 3
     nTablePageSize    = 10
 
     dim strAccessDBFile
@@ -81,6 +81,7 @@
     dim strOptrResetDatabase
     dim strOptrImportIPTable
     dim strOptrImportMACTable
+    dim strOptrImportChannelData
     dim strOptrAddVisitRule
     dim strOptrDeleteVisitRule
     dim strOptrModifyVisitRulePage
@@ -98,15 +99,16 @@
     strOptrResetDatabase      = "3"
     strOptrImportIPTable      = "4"
     strOptrImportMACTable     = "5"
-    strOptrAddVisitRule       = "6"
-    strOptrDeleteVisitRule    = "7"
-    strOptrModifyVisitRulePage= "8"
-    strOptrModifyVisitRuleDoIt= "9"
-    strOptrClearVisitRule     = "a"
-    strOptrDeleteVisitRecord  = "b"
-    strOptrClearVisitRecord   = "c"
-    strOptrVisitRecordCond    = "d"
-    strOptrTablePageSubmit    = "e"
+    strOptrImportChannelData  = "6"
+    strOptrAddVisitRule       = "7"
+    strOptrDeleteVisitRule    = "8"
+    strOptrModifyVisitRulePage= "9"
+    strOptrModifyVisitRuleDoIt= "a"
+    strOptrClearVisitRule     = "b"
+    strOptrDeleteVisitRecord  = "c"
+    strOptrClearVisitRecord   = "d"
+    strOptrVisitRecordCond    = "e"
+    strOptrTablePageSubmit    = "f"
 
 %>
 

@@ -10,19 +10,22 @@
         set fs = Server.CreateObject("Scripting.FileSystemObject")
         set txt= fs.OpenTextFile(Server.MapPath(url))
         set rs = Server.CreateObject("ADODB.recordset")
+        on error resume next
         conn.Execute("DELETE FROM IPLocationTable")
         sql = "SELECT * FROM IPLocationTable"
         rs.Open sql, conn, 1, 3
         do while not txt.AtEndOfStream
             line = txt.ReadLine()
-            items= split(line, chr(9))
-            rs.AddNew()
-            rs("NUM_IP_START") = cdbl(items(0))
-            rs("NUM_IP_END"  ) = cdbl(items(1))
-            rs("STR_IP_START") = items(2)
-            rs("STR_IP_END"  ) = items(3)
-            rs("LOCATION"    ) = items(4)
-            rs.Update()
+            if line <> "" then
+                items= split(line, chr(9))
+                rs.AddNew()
+                rs("NUM_IP_START") = cdbl(items(0))
+                rs("NUM_IP_END"  ) = cdbl(items(1))
+                rs("STR_IP_START") = items(2)
+                rs("STR_IP_END"  ) = items(3)
+                rs("LOCATION"    ) = items(4)
+                rs.Update()
+            end if
         loop
         rs.Close()
         txt.Close()
@@ -36,6 +39,7 @@
         set fs = Server.CreateObject("Scripting.FileSystemObject")
         set txt= fs.OpenTextFile(Server.MapPath(url))
         set rs = Server.CreateObject("ADODB.recordset")
+        on error resume next
         conn.Execute("DELETE FROM PermittedMACTable")
         sql = "SELECT * FROM PermittedMACTable"
         rs.Open sql, conn, 1, 3
@@ -89,6 +93,19 @@
             end if
         next
     end sub
+
+
+    sub ImportChannelData(url)
+        dim ado
+        set ado  = Server.CreateObject("Adodb.Stream")
+        ado.Type = 1
+        ado.Open()
+        ado.LoadFromFile(Server.MapPath(url))
+        application("ChannelFileData") = ado.Read
+        application("ChannelFileSize") = ado.Size
+        ado.Close()
+        set ado = nothing
+    end sub
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
@@ -128,6 +145,14 @@
         Response.Write("正在导入 MAC 授权库...<br/>" & vbcrlf)
         Response.Flush()
         ImportMACTableFromTxt(strMACTableTxt)
+    end if
+
+    if strOptrCur = strOptrResetDatabase or strOptrCur = strOptrImportChannelData then
+        if nWriteOutType = 3 then
+            Response.Write("正在导入频道数据文件...<br/>" & vbcrlf)
+            Response.Flush()
+            ImportChannelData(strChannelXmlPath)
+        end if
     end if
 
     Response.Write("完成！<br/>" & vbcrlf)

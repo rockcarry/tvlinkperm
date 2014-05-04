@@ -46,6 +46,8 @@
             WriteOutBinaryFile(strChannelXmlPath)
         case 2
             Response.Redirect(strChannelXmlPath)
+        case 3
+            WriteOutBinaryFileFromApplication()
         end select
     end if
 %>
@@ -128,6 +130,13 @@
 
         ado.Close()
         set ado = nothing
+    end sub
+
+    sub WriteOutBinaryFileFromApplication()
+        Response.AddHeader "Content-Length", application("ChannelFileSize")
+        Response.ContentType = "application/octet-stream"
+        Response.BinaryWrite application("ChannelFileData")
+        Response.Flush
     end sub
 
     function IsValidMACAddress(mac)
