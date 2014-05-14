@@ -241,12 +241,12 @@
 <%
     dim strVisitRecordQuerySQL(7)
     strVisitRecordQuerySQL(0)  = "SELECT * FROM VisitRecordTable"
-    strVisitRecordQuerySQL(1)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation = 'China'"
-    strVisitRecordQuerySQL(2)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation <> 'China'"
+    strVisitRecordQuerySQL(1)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation = '" & strChinaCode & "'"
+    strVisitRecordQuerySQL(2)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation <> '" & strChinaCode & "'"
 if nDataBaseType = 1 or nDataBaseType = 2 then
     strVisitRecordQuerySQL(3)  = "SELECT * FROM VisitRecordTable WHERE DateDiff('d', VisitLastTime, Date()) = 0"
 else
-    strVisitRecordQuerySQL(3)  = "SELECT * FROM VisitRecordTable WHERE DateDiff('d', VisitLastTime, GetDate()) = 0"
+    strVisitRecordQuerySQL(3)  = "SELECT * FROM VisitRecordTable WHERE DateDiff(day, VisitLastTime, GetDate()) = 0"
 end if
     strVisitRecordQuerySQL(4)  = "SELECT * FROM VisitRecordTable WHERE NOT EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
     strVisitRecordQuerySQL(5)  = "SELECT * FROM VisitRecordTable WHERE EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"

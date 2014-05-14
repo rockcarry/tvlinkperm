@@ -11,6 +11,7 @@
     dim nDataBaseType
     dim nWriteOutType
     dim nTablePageSize
+    dim strChinaCode
 
     strChannelXmlPath = "channel.xml"
     strIPLocTableTxt  = "iptable.txt"
@@ -22,6 +23,7 @@
     nDataBaseType     = 2
     nWriteOutType     = 1
     nTablePageSize    = 10
+    strChinaCode      = "China"
 
     dim strAccessDBFile
     dim strAccessDBPWD
