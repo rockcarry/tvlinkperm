@@ -65,11 +65,13 @@ end if
     end sub
 
     sub AddVisitRule()
-        dim ip, mac, perm, sql, rs
-        ip   = Request.Form("ip"  )
-        mac  = Request.Form("mac" )
-        perm = Request.Form("perm")
-        mac  = lcase(mac)
+        dim ip, mac, remark, perm, sql, rs
+        ip     = Request.Form("ip"    )
+        mac    = Request.Form("mac"   )
+        remark = Request.Form("remark")
+        perm   = Request.Form("perm"  )
+        mac    = lcase(mac)
+        remark = left(remark, 64)
 
         if ip = "" OR mac = "" then
             strErrorMessage = "IP 和 MAC 地址不能为空！<br/>"
@@ -88,8 +90,9 @@ end if
             bSubmitSucceed  = false
         else
             rs.AddNew()
-            rs("IP" ) = ip
-            rs("MAC") = mac
+            rs("IP" )    = ip
+            rs("MAC")    = mac
+            rs("Remark") = remark
             rs("VisitPermission") = perm
             rs.Update()
         end if
@@ -108,6 +111,7 @@ end if
     dim nModVisitRuleID
     dim strModVisitRuleIP
     dim strModVisitRuleMAC
+    dim strModVisitRuleRemark
     dim nModVisitRulePerm
     sub ModifyVisitRulePage()
         dim sql, rs
@@ -115,10 +119,11 @@ end if
         sql = "SELECT * FROM VisitRuleTable WHERE ID = " & Request.QueryString("id")
         rs.Open sql, conn
         if not rs.EOF then
-            nModVisitRuleID    = rs("ID")
-            strModVisitRuleIP  = rs("IP")
-            strModVisitRuleMAC = rs("MAC")
-            nModVisitRulePerm  = rs("VisitPermission")
+            nModVisitRuleID      = rs("ID")
+            strModVisitRuleIP    = rs("IP")
+            strModVisitRuleMAC   = rs("MAC")
+            strModVisitRuleRemark= rs("Remark")
+            nModVisitRulePerm    = rs("VisitPermission")
         else
             strErrorMessage = "要修改的 IP 和 MAC 地址的访问规则不存在！<br/>"
             strErrorMessage = strErrorMessage & "<a href=""" & STR_ADMIN_PAGE_NAME & """>返回</a>"
@@ -135,7 +140,8 @@ end if
         sql = "SELECT * FROM VisitRuleTable WHERE ID = " & id
         rs.Open sql, conn, 1, 3
         if not rs.EOF then
-            rs("VisitPermission") = Request.Form("perm")
+            rs("Remark"         ) = Request.Form("remark")
+            rs("VisitPermission") = Request.Form("perm"  )
             rs.Update()
         end if
         rs.Close()
@@ -187,20 +193,32 @@ end if
   <title>管理页面</title>
 </head>
 <body>
-  <form action="submit.asp" method="post">
-    <input type="hidden" name="optr" value="<%=strOptrModifyVisitRuleDoIt%>" />
-    <input type="hidden" name="id"   value="<%=nModVisitRuleID%>" />
-    IP:  <%=strModVisitRuleIP %>
-    MAC: <%=strModVisitRuleMAC%>
-    <% if nModVisitRulePerm = 1 then %>
-    <input type="radio" name="perm" value="1" checked="checked" /> allowed
-    <input type="radio" name="perm" value="0" /> forbidden
-    <% else %>
-    <input type="radio" name="perm" value="1" /> allowed
-    <input type="radio" name="perm" value="0" checked="checked" /> forbidden
-    <% end if %>
-    <input type="submit" value="修改" />
-  </form>
+
+<h2>访问规则</h2>
+
+<form action="submit.asp" method="post">
+  <input type="hidden" name="optr" value="<%=strOptrModifyVisitRuleDoIt%>" />
+  <input type="hidden" name="id"   value="<%=nModVisitRuleID%>" />
+  <table>
+    <tr><td>IP:</td><td><%=strModVisitRuleIP %></td></tr>
+    <tr><td>MAC:</td><td><%=strModVisitRuleMAC%></td></tr>
+    <tr><td>备注:</td><td><input type="text" name="remark" value="<%=strModVisitRuleRemark%>" size="64" /></td></tr>
+    <tr>
+      <td>权限:</td>
+      <td>
+      <% if nModVisitRulePerm = 1 then %>
+        <input type="radio" name="perm" value="1" checked="checked" /> allowed
+        <input type="radio" name="perm" value="0" /> forbidden
+      <% else %>
+        <input type="radio" name="perm" value="1" /> allowed
+        <input type="radio" name="perm" value="0" checked="checked" /> forbidden
+      <% end if %>
+      </td>
+    </tr>
+    <tr><td></td><td><input type="submit" value="修改访问规则" /></td></tr>
+  </table>
+</form>
+
 </body>
 </html>
 <% else %>

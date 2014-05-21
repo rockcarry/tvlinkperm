@@ -8,16 +8,17 @@
 %>
 
 <%
-    dim tabVisitRuleTable(8)
+    dim tabVisitRuleTable(9)
     tabVisitRuleTable(0) = "tabVisitRuleTable"
-    tabVisitRuleTable(1) = "50%"
+    tabVisitRuleTable(1) = "80%"
     tabVisitRuleTable(2) = strAdminPageName
     tabVisitRuleTable(3) = "submit.asp"
     tabVisitRuleTable(4) = "编号"
     tabVisitRuleTable(5) = "IP 地址"
     tabVisitRuleTable(6) = "MAC 地址"
-    tabVisitRuleTable(7) = "访问权限"
-    tabVisitRuleTable(8) = "管理"
+    tabVisitRuleTable(7) = "备注"
+    tabVisitRuleTable(8) = "访问权限"
+    tabVisitRuleTable(9) = "管理"
 
     dim tabVisitRecordTable(11)
     tabVisitRecordTable(0)  = "tabVisitRuleRecord"
@@ -127,7 +128,7 @@
         Response.Write(MakePageLinkString(table, page - 1,     " 上页 "))
         Response.Write(MakePageLinkString(table, page + 1,     " 下页 "))
         Response.Write(MakePageLinkString(table, rs.PageCount, " 尾页 "))
-        for i=page-5 to page+5
+        for i=page-10 to page+10
             if i >= 1 and i <= rs.PageCount then
                 Response.Write(MakePageLinkString(table, i, " " & i & " "))
             end if
@@ -193,19 +194,25 @@
 
 <h2>访问规则</h2>
 <% DisplayTableByPage tabVisitRuleTable, "SELECT * FROM VisitRuleTable" %>
+<br/><br/>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrAddVisitRule%>" />
-  IP: <input type="text" name="ip" value="*" />
-  MAC:<input type="text" name="mac"value="*" />
-  <input type="radio"  name="perm" value="1" />allowed
-  <input type="radio"  name="perm" value="0" checked="checked" />forbidden
-  <input type="submit" value="添加规则" />
+  <table>
+    <tr><td>IP:</td><td><input type="text" name="ip" value="*" size="18" /></td></tr>
+    <tr><td>MAC:</td><td><input type="text" name="mac" value="*" size="18" /></td></tr>
+    <tr><td>备注:</td><td><input type="text" name="remark" size="64" /></td></tr>
+    <tr>
+      <td>权限:</td>
+      <td>
+        <input type="radio"  name="perm" value="1" />allowed
+        <input type="radio"  name="perm" value="0" checked="checked" />forbidden
+      </td>
+    </tr>
+    <tr><td></td><td><input type="submit" value="添加访问规则" /></td></tr>
+  </table>
 </form>
 
-<form action="submit.asp" method="post">
-  <input type="hidden" name="optr" value="<%=strOptrClearVisitRule%>" />
-  <input type="submit" value="清空访问规则" />
-</form>
+
 <br/>
 
 <h2>访问记录</h2>
@@ -255,6 +262,7 @@ end if
 
     DisplayTableByPage tabVisitRecordTable, strVisitRecordQuerySQL(nVisitRecordQueryCond)
 %>
+
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr"  value="<%=strOptrClearVisitRecord%>" />
   <input type="hidden" name="cond"  value="<%=nVisitRecordQueryCond%>" />
