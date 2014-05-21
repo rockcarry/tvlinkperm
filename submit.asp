@@ -46,6 +46,8 @@ end if
         VisitRecordCondQuery()
     case strOptrClearVisitRecord
         ClearVisitRecord()
+    case strOptrExportVisitRecord
+        ExportVisitRecord()
     case strOptrTablePageSubmit
         HandleTablePageSubmit()
     end select
@@ -170,6 +172,34 @@ end if
         cond = cint(Request.Form("cond"))
         sql  = strVisitRecordDelSQL(cond)
         conn.Execute(sql)
+    end sub
+
+    sub ExportVisitRecord()
+        dim fs, txt, rs, sql, x, line
+
+        set fs = Server.CreateObject("Scripting.FileSystemObject")
+        set txt= fs.OpenTextFile(Server.MapPath(strExpVisitRecord), 2, true)
+        set rs = Server.CreateObject("ADODB.recordset")
+
+        sql = "SELECT * FROM VisitRecordTable"
+        rs.Open sql, conn
+
+        do while not rs.EOF
+            line = ""
+            for each x in rs.Fields
+                line = line & x.value & chr(9)
+            next
+            txt.WriteLine(line)
+            rs.MoveNext()
+        loop
+
+        rs.Close()
+        txt.Close()
+        set rs = nothing
+        set txt= nothing
+        set fs = nothing
+
+        strRedirectTo = strExpVisitRecord
     end sub
 
     sub HandleTablePageSubmit()

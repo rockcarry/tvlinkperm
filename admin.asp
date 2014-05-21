@@ -263,12 +263,24 @@ end if
     DisplayTableByPage tabVisitRecordTable, strVisitRecordQuerySQL(nVisitRecordQueryCond)
 %>
 
+<table>
+<tr>
+<td>
+<form action="submit.asp" method="post">
+  <input type="hidden" name="optr"  value="<%=strOptrExportVisitRecord%>" />
+  <input type="submit" value="导出访问记录" />
+</form>
+</td>
+<td>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr"  value="<%=strOptrClearVisitRecord%>" />
   <input type="hidden" name="cond"  value="<%=nVisitRecordQueryCond%>" />
   <input type="hidden" name="ipmac" value="<%=Request.Cookies(tabVisitRecordTable(0))("ipmac")%>"/>
   <input type="submit" value="清空访问记录" />
 </form>
+</td>
+</tr>
+</table>
 
 </body>
 </html>

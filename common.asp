@@ -7,6 +7,7 @@
     dim strAdminLoginPwd
     dim strAdminPageName
     dim strLoginPageName
+    dim strExpVisitRecord
     dim bSaveVisitRecord
     dim nDataBaseType
     dim nWriteOutType
@@ -19,6 +20,7 @@
     strAdminLoginPwd  = "www.tvbox.com"
     strAdminPageName  = "admin.asp"
     strLoginPageName  = "login.asp"
+    strExpVisitRecord = "export_visit_rule.txt"
     bSaveVisitRecord  = true
     nDataBaseType     = 2
     nWriteOutType     = 1
@@ -91,6 +93,7 @@
     dim strOptrClearVisitRule
     dim strOptrDeleteVisitRecord
     dim strOptrClearVisitRecord
+    dim strOptrExportVisitRecord
     dim strOptrVisitRecordCond
     dim strOptrTablePageSubmit
 
@@ -109,8 +112,9 @@
     strOptrClearVisitRule     = "b"
     strOptrDeleteVisitRecord  = "c"
     strOptrClearVisitRecord   = "d"
-    strOptrVisitRecordCond    = "e"
-    strOptrTablePageSubmit    = "f"
+    strOptrExportVisitRecord  = "e"
+    strOptrVisitRecordCond    = "f"
+    strOptrTablePageSubmit    = "g"
 
 %>
 
