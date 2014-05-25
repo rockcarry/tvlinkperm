@@ -20,6 +20,8 @@ strMACTableTxt    = "mac.txt"       // mac ÊÚÈ¨¿âÎÄ¼ş£¬ÎÄ±¾ĞÎÊ½£¬¿Éµ¼ÈëÊı¾İ¿âÀ´¸
 strAdminLoginPwd  = "www.tvbox.com" // ¹ÜÀíÔ±µÇÂ½ÃÜÂë
 strAdminPageName  = "admin.asp"     // ¹ÜÀíÒ³ÃæÃû£¬Èç¹ûĞŞ¸ÄÁË admin.asp µÄÃû³Æ£¬ĞèÇóĞŞ¸ÄÕâ¸ö
 strLoginPageName  = "login.asp"     // ¹ÜÀíÒ³ÃæÃû£¬Èç¹ûĞŞ¸ÄÁË login.asp µÄÃû³Æ£¬ĞèÇóĞŞ¸ÄÕâ¸ö
+strExpVisitRecord = "export_visit_rule.txt"  // µ¼³ö·ÃÎÊ¼ÇÂ¼±£´æµÄ txt ÎÄ¼şÃû
+strExpMacPermTab  = "export_mac_permmit.txt" // µ¼³ö mac ÊÚÈ¨±í±£´æµÄ txt ÎÄ¼şÃû
 bSaveVisitRecord  = true            // ÊÇ·ñ±£´æ·ÃÎÊ¼ÇÂ¼
 nDataBaseType     = 1               // Êı¾İ¿âÀàĞÍ£¬1-access, 2/3-sqlserver
 nWriteOutType     = 1               // ÆµµÀÊı¾İĞ´³ö·½Ê½ 1-write binary ·½Ê½£¬2-ÖØ¶¨Ïò·½Ê½
@@ -36,6 +38,14 @@ strSQLServerUSER = "sa"                           // sqlserver user
 strSQLServerPWD  = "Loolbox2014"                  // sqlserver password
 
 µÚÒ»´ÎÊ¹ÓÃĞèÒªÏÈÖ´ĞĞ initdb.asp ½øĞĞÊı¾İ¿â³õÊ¼»¯£¬ÒÔºó¾Í²»ÒªÖ´ĞĞÁË£¬·ñÔò»áµ¼ÖÂÊı¾İÇå¿Õ¡£
+
+
+×éºÏÌõ¼ş²éÑ¯ËµÃ÷£º
+×éºÏÌõ¼şÊÇ¶àÖÖ²éÑ¯Ìõ¼şµÄ×éºÏ£¬²»ĞèÒªµÄ²éÑ¯Ìõ¼ş¿ÉÒÔÊ¹ÓÃ * À´´úÌæ£¬¿ÉÒÔÊ¹ÓÃ ! À´¶Ô²éÑ¯Ìõ¼şÈ¡·´
+¾ÙÀıËµÃ÷£º
+¹ú¼Ò´úÂë - !China
+ÆäËû     - *
+ÆäÒâÒåÊÇ£¬²éÑ¯ËùÓĞ¹ú¼Ò´úÂë²»Îª China µÄ·ÃÎÊ¼ÇÂ¼
 
 
 iptool.exe Ê¹ÓÃËµÃ÷£º
