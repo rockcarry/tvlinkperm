@@ -154,17 +154,27 @@
         nVisitRecordQueryCond = cint(nVisitRecordQueryCond)
     end if
 
-    sub DisplayVisitRecordQueryOption()
+    sub DisplayQueryOptions(name, opts, sel)
         dim str, i
-        Response.Write("<select name=""cond"">" & vbcrlf)
-        for i=0 to ubound(strVisitRecordQueryText)
+        Response.Write("<select name=""" & name & """>" & vbcrlf)
+        for i=0 to ubound(opts)
             str = "<option value=""" & i & """"
-            if i = nVisitRecordQueryCond then str = str & "selected"
-            str = str & ">" & strVisitRecordQueryText(i) & "</option>" & vbcrlf
+            if i = sel then str = str & "selected"
+            str = str & ">" & opts(i) & "</option>" & vbcrlf
             Response.Write(str)
         next
         Response.Write("</select>" & vbcrlf)
     end sub
+
+    function GetDistinctMACNum(cond)
+        dim rs, sql
+        set rs = Server.CreateObject("ADODB.recordset")
+        sql = "SELECT DISTINCT MAC FROM VisitRecordTable" & cond
+        rs.Open sql, conn, 1
+        GetDistinctMACNum = rs.RecordCount
+        rs.Close()
+        set rs = nothing
+    end function
 %>
 
 <% OpenConn() %>
@@ -213,70 +223,157 @@
 </form>
 
 
-<br/>
-
 <h2>访问记录</h2>
-<table>
-<tr>
-<td>
-<form action="submit.asp" method="post">
-  <input type="hidden" name="optr"  value="<%=strOptrVisitRecordCond%>" />
-  <input type="hidden" name="table" value="<%=tabVisitRecordTable(0)%>" />
-  <% DisplayVisitRecordQueryOption() %>
-  <input type="submit" value="查询" />
-</form>
-</td>
-<td>&nbsp;</td>
-<td>
-<form action="submit.asp" method="post">
-  <input type="hidden" name="optr"  value="<%=strOptrVisitRecordCond%>" />
-  <input type="hidden" name="table" value="<%=tabVisitRecordTable(0)%>" />
-  <% if nVisitRecordQueryCond = 6 then%>
-  <input type="radio" name="cond" value="6" checked="checked" />IP
-  <input type="radio" name="cond" value="7" />MAC
-  <% else %>
-  <input type="radio" name="cond" value="6" />IP
-  <input type="radio" name="cond" value="7" checked="checked" />MAC
-  <% end if %>
-  <input type="text"  name="ipmac" value="<%=Request.Cookies(tabVisitRecordTable(0))("ipmac")%>"/>
-  <input type="submit" value="查询" />
-</form>
-</td>
-</tr>
-</table>
 
 <%
-    dim strVisitRecordQuerySQL(7)
-    strVisitRecordQuerySQL(0)  = "SELECT * FROM VisitRecordTable"
-    strVisitRecordQuerySQL(1)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation = '" & strChinaCode & "'"
-    strVisitRecordQuerySQL(2)  = "SELECT * FROM VisitRecordTable WHERE VisitLocation <> '" & strChinaCode & "'"
-if nDataBaseType = 1 or nDataBaseType = 2 then
-    strVisitRecordQuerySQL(3)  = "SELECT * FROM VisitRecordTable WHERE DateDiff('d', VisitLastTime, Date()) = 0"
-else
-    strVisitRecordQuerySQL(3)  = "SELECT * FROM VisitRecordTable WHERE DateDiff(day, VisitLastTime, GetDate()) = 0"
-end if
-    strVisitRecordQuerySQL(4)  = "SELECT * FROM VisitRecordTable WHERE NOT EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
-    strVisitRecordQuerySQL(5)  = "SELECT * FROM VisitRecordTable WHERE EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
-    strVisitRecordQuerySQL(6)  = "SELECT * FROM VisitRecordTable WHERE IP  = '" & Request.Cookies(tabVisitRecordTable(0))("ipmac") & "'"
-    strVisitRecordQuerySQL(7)  = "SELECT * FROM VisitRecordTable WHERE MAC = '" & Request.Cookies(tabVisitRecordTable(0))("ipmac") & "'"
+    dim strQueryCondsVisitTime(4)
+    dim strQueryCondsVisitPerm(2)
+    dim strQueryCondsMACPerm(2)
+    dim strQueryCondsSortType(4)
+    dim strQueryCondCountryCode
+    dim strQueryCondIPValue
+    dim strQueryCondMACValue
+    dim nQueryCondVisitTimeValue
+    dim nQueryCondVisitPermValue
+    dim nQueryCondMACPermValue
+    dim nQueryCondSortTypeValue
+    dim strSQLVisitTime(4)
+    dim strSQLVisitPerm(2)
+    dim strSQLMACPerm(2)
+    dim strSQLSortType(4)
+    dim strSQLCondStr
 
-    DisplayTableByPage tabVisitRecordTable, strVisitRecordQuerySQL(nVisitRecordQueryCond)
+    strQueryCondsVisitTime(0) = "*"
+    strQueryCondsVisitTime(1) = "一日内"
+    strQueryCondsVisitTime(2) = "一周内"
+    strQueryCondsVisitTime(3) = "一月内"
+    strQueryCondsVisitTime(4) = "一年内"
+
+    strQueryCondsVisitPerm(0) = "*"
+    strQueryCondsVisitPerm(1) = "有权限"
+    strQueryCondsVisitPerm(2) = "无权限"
+
+    strQueryCondsMACPerm(0)   = "*"
+    strQueryCondsMACPerm(1)   = "已授权"
+    strQueryCondsMACPerm(2)   = "未授权"
+
+    strQueryCondsSortType(0)   = "默认方式"
+    strQueryCondsSortType(1)   = "访问时间+"
+    strQueryCondsSortType(2)   = "访问时间-"
+    strQueryCondsSortType(3)   = "访问计数+"
+    strQueryCondsSortType(4)   = "访问计数-"
+
+    strQueryCondCountryCode  = Request.Cookies("query_cond")("country_code")
+    strQueryCondIPValue      = Request.Cookies("query_cond")("ip_value")
+    strQueryCondMACValue     = Request.Cookies("query_cond")("mac_value")
+    nQueryCondVisitTimeValue = Request.Cookies("query_cond")("visit_time")
+    nQueryCondVisitPermValue = Request.Cookies("query_cond")("visit_perm")
+    nQueryCondMACPermValue   = Request.Cookies("query_cond")("mac_perm")
+    nQueryCondSortTypeValue  = Request.Cookies("query_cond")("sort_type")
+
+    if strQueryCondCountryCode  = "" then nQueryCondVisitTimeValue = "*"
+    if strQueryCondIPValue      = "" then strQueryCondIPValue      = "*"
+    if strQueryCondMACValue     = "" then strQueryCondMACValue     = "*"
+    if nQueryCondVisitTimeValue = "" then nQueryCondVisitTimeValue = 0
+    if nQueryCondVisitPermValue = "" then nQueryCondVisitPermValue = 0
+    if nQueryCondMACPermValue   = "" then nQueryCondMACPermValue   = 0
+    if nQueryCondSortTypeValue  = "" then nQueryCondSortTypeValue  = 0
+    nQueryCondVisitTimeValue = cint(nQueryCondVisitTimeValue)
+    nQueryCondVisitPermValue = cint(nQueryCondVisitPermValue)
+    nQueryCondMACPermValue   = cint(nQueryCondMACPermValue  )
+    nQueryCondSortTypeValue  = cint(nQueryCondSortTypeValue )
+
+    strSQLVisitTime(0) = ""
+if nDataBaseType = 1 or nDataBaseType = 2 then
+    strSQLVisitTime(1) = " AND DateDiff('d', VisitLastTime, Date()) = 0"
+    strSQLVisitTime(2) = " AND DateDiff('w', VisitLastTime, Date()) = 0"
+    strSQLVisitTime(3) = " AND DateDiff('m', VisitLastTime, Date()) = 0"
+    strSQLVisitTime(4) = " AND DateDiff('yyyy', VisitLastTime, Date()) = 0"
+else
+    strSQLVisitTime(1) = " AND DateDiff(day, VisitLastTime, GetDate()) = 0"
+    strSQLVisitTime(2) = " AND DateDiff(week, VisitLastTime, GetDate()) = 0"
+    strSQLVisitTime(3) = " AND DateDiff(month, VisitLastTime, GetDate()) = 0"
+    strSQLVisitTime(4) = " AND DateDiff(year, VisitLastTime, GetDate()) = 0"
+end if
+
+    strSQLVisitPerm(0) = ""
+    strSQLVisitPerm(1) = " AND VisitPermission=1"
+    strSQLVisitPerm(2) = " AND VisitPermission=0"
+
+    strSQLMACPerm(0)   = ""
+    strSQLMACPerm(1)   = " AND EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
+    strSQLMACPerm(2)   = " AND NOT EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
+
+    strSQLSortType(0)  = ""
+    strSQLSortType(1)  = " ORDER BY VisitLastTime"
+    strSQLSortType(2)  = " ORDER BY VisitLastTime DESC"
+    strSQLSortType(3)  = " ORDER BY VisitCounter"
+    strSQLSortType(4)  = " ORDER BY VisitCounter DESC"
+
+    strSQLCondStr = "WHERE VisitLocation='" & strQueryCondCountryCode & "'"
+    strSQLCondStr = strSQLCondStr & " AND IP='" & strQueryCondIPValue & "'"
+    strSQLCondStr = strSQLCondStr & " AND MAC='" & strQueryCondMACValue & "'"
+    strSQLCondStr = strSQLCondStr & "MAC='" & strQueryCondMACValue & "' AND "
+
+    function MakeQueryStr0(section, str)
+        if str <> "*" then
+            if left(str, 1) = "!" then
+                MakeQueryStr0 = " AND " & section & "<>'" & mid(str, 2) & "'"
+            else
+                MakeQueryStr0 = " AND " & section & "='" & str & "'"
+            end if
+        else
+            MakeQueryStr0 = ""
+        end if
+    end function
+
+    strSQLCondStr = " WHERE true"
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitLocation", strQueryCondCountryCode)
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("IP" , strQueryCondIPValue )
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("MAC", strQueryCondMACValue)
+    strSQLCondStr = strSQLCondStr & strSQLVisitTime(nQueryCondVisitTimeValue)
+    strSQLCondStr = strSQLCondStr & strSQLVisitPerm(nQueryCondVisitPermValue)
+    strSQLCondStr = strSQLCondStr & strSQLMACPerm(nQueryCondMACPermValue)
 %>
 
+<form action="submit.asp" method="post">
+  <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
+  <table>
+    <tr><td>国家代码</td><td>IP</td><td>MAC</td><td>访问时间</td><td>访问权限</td><td>MAC授权</td><td>排序方式</td><td></td></tr>
+    <tr>
+      <td><input name="country_code" type="text" value="<%=strQueryCondCountryCode%>" size="8" /></td>
+      <td><input name="ip_value"     type="text" value="<%=strQueryCondIPValue    %>" size="17"/></td>
+      <td><input name="mac_value"    type="text" value="<%=strQueryCondMACValue   %>" size="17"/></td>
+      <td><% DisplayQueryOptions "visit_time", strQueryCondsVisitTime, nQueryCondVisitTimeValue %></td>
+      <td><% DisplayQueryOptions "visit_perm", strQueryCondsVisitPerm, nQueryCondVisitPermValue %></td>
+      <td><% DisplayQueryOptions "mac_perm"  , strQueryCondsMACPerm  , nQueryCondMACPermValue   %></td>
+      <td><% DisplayQueryOptions "sort_type" , strQueryCondsSortType , nQueryCondSortTypeValue  %></td>
+      <td><input type="submit" value="查询"/></td>
+    </tr>
+  </table>
+</form>
+
+<%
+    dim strSQLVisitRecord
+    strSQLVisitRecord = "SELECT * FROM VisitRecordTable"
+    strSQLVisitRecord = strSQLVisitRecord & strSQLCondStr & strSQLSortType(nQueryCondSortTypeValue)
+    DisplayTableByPage tabVisitRecordTable, strSQLVisitRecord
+%>
+<br/>总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.<br/></br>
 <table>
 <tr>
 <td>
 <form action="submit.asp" method="post">
-  <input type="hidden" name="optr"  value="<%=strOptrExportVisitRecord%>" />
+  <input type="hidden" name="optr" value="<%=strOptrExportVisitRecord%>" />
+  <input type="hidden" name="cond" value="<%=strSQLCondStr%>" />
   <input type="submit" value="导出访问记录" />
 </form>
 </td>
 <td>
 <form action="submit.asp" method="post">
-  <input type="hidden" name="optr"  value="<%=strOptrClearVisitRecord%>" />
-  <input type="hidden" name="cond"  value="<%=nVisitRecordQueryCond%>" />
-  <input type="hidden" name="ipmac" value="<%=Request.Cookies(tabVisitRecordTable(0))("ipmac")%>"/>
-  <input type="submit" value="清空访问记录" />
+  <input type="hidden" name="optr" value="<%=strOptrClearVisitRecord%>" />
+  <input type="hidden" name="cond" value="<%=strSQLCondStr%>" />
+  <input type="submit" value="删除访问记录" />
 </form>
 </td>
 </tr>

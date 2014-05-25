@@ -10,20 +10,6 @@
     strErrorMessage = ""
     strRedirectTo   = strAdminPageName
 
-    dim strVisitRecordDelSQL(7)
-    strVisitRecordDelSQL(0) = "DELETE FROM VisitRecordTable"
-    strVisitRecordDelSQL(1) = "DELETE FROM VisitRecordTable WHERE VisitLocation = 'China'"
-    strVisitRecordDelSQL(2) = "DELETE FROM VisitRecordTable WHERE VisitLocation <> 'China'"
-if nDataBaseType = 1 or nDataBaseType = 2 then
-    strVisitRecordDelSQL(3) = "DELETE FROM VisitRecordTable WHERE DateDiff('d', VisitLastTime, Date()) = 0"
-else
-    strVisitRecordDelSQL(3) = "DELETE FROM VisitRecordTable WHERE DateDiff('d', VisitLastTime, GetDate()) = 0"
-end if
-    strVisitRecordDelSQL(4) = "DELETE FROM VisitRecordTable WHERE NOT EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
-    strVisitRecordDelSQL(5) = "DELETE FROM VisitRecordTable WHERE EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)"
-    strVisitRecordDelSQL(6) = "DELETE FROM VisitRecordTable WHERE IP  = '" & Request.Form("ipmac") & "'"
-    strVisitRecordDelSQL(7) = "DELETE FROM VisitRecordTable WHERE MAC = '" & Request.Form("ipmac") & "'"
-
     strOptrCur = Request("optr")
     select case strOptrCur
     case strOptrAdminLogin
@@ -159,19 +145,17 @@ end if
     end sub
 
     sub VisitRecordCondQuery()
-        dim table, cond, ipmac
-        table = Request.Form("table")
-        cond  = Request.Form("cond" )
-        ipmac = Request.Form("ipmac")
-        Response.Cookies(table)("cond" ) = cond
-        Response.Cookies(table)("ipmac") = ipmac
+        Response.Cookies("query_cond")("country_code") = Request.Form("country_code")
+        Response.Cookies("query_cond")("ip_value")     = Request.Form("ip_value")
+        Response.Cookies("query_cond")("mac_value")    = Request.Form("mac_value")
+        Response.Cookies("query_cond")("visit_time")   = Request.Form("visit_time")
+        Response.Cookies("query_cond")("visit_perm")   = Request.Form("visit_perm")
+        Response.Cookies("query_cond")("mac_perm")     = Request.Form("mac_perm")
+        Response.Cookies("query_cond")("sort_type")    = Request.Form("sort_type")
     end sub
 
     sub ClearVisitRecord()
-        dim sql, cond
-        cond = cint(Request.Form("cond"))
-        sql  = strVisitRecordDelSQL(cond)
-        conn.Execute(sql)
+        conn.Execute("DELETE FROM VisitRecordTable" & Request.Form("cond"))
     end sub
 
     sub ExportVisitRecord()
@@ -181,7 +165,7 @@ end if
         set txt= fs.OpenTextFile(Server.MapPath(strExpVisitRecord), 2, true)
         set rs = Server.CreateObject("ADODB.recordset")
 
-        sql = "SELECT * FROM VisitRecordTable"
+        sql = "SELECT * FROM VisitRecordTable" & Request.Form("cond")
         rs.Open sql, conn
 
         do while not rs.EOF
