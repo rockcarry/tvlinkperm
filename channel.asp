@@ -62,7 +62,7 @@
         sql = "SELECT LOCATION FROM IPLocationTable WHERE NUM_IP_START <= " & num_ip
         sql = sql & " AND NUM_IP_END >= " & num_ip
         rs.Open sql, conn
-    
+
         if not rs.EOF then
             GetLocationByIP = rs("LOCATION")
         else
@@ -93,7 +93,7 @@
         rs.Close()
         set rs = nothing
     end function
-  
+
     sub WriteVisitRecord(ip, mac, perm, loc)
         dim rs, sql
         set rs = Server.CreateObject("ADODB.recordset")
