@@ -271,7 +271,7 @@
     nQueryCondMACPermValue   = Request.Cookies("query_cond")("mac_perm")
     nQueryCondSortTypeValue  = Request.Cookies("query_cond")("sort_type")
 
-    if strQueryCondCountryCode  = "" then nQueryCondVisitTimeValue = "*"
+    if strQueryCondCountryCode  = "" then strQueryCondCountryCode  = "*"
     if strQueryCondIPValue      = "" then strQueryCondIPValue      = "*"
     if strQueryCondMACValue     = "" then strQueryCondMACValue     = "*"
     if nQueryCondVisitTimeValue = "" then nQueryCondVisitTimeValue = 0
