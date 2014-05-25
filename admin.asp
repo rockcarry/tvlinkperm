@@ -364,6 +364,13 @@ end if
 <tr>
 <td>
 <form action="submit.asp" method="post">
+  <input type="hidden" name="optr" value="<%=strOptrClearVisitRecord%>" />
+  <input type="hidden" name="cond" value="<%=strSQLCondStr%>" />
+  <input type="submit" value="删除访问记录" />
+</form>
+</td>
+<td>
+<form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrExportVisitRecord%>" />
   <input type="hidden" name="cond" value="<%=strSQLCondStr%>" />
   <input type="submit" value="导出访问记录" />
@@ -371,9 +378,8 @@ end if
 </td>
 <td>
 <form action="submit.asp" method="post">
-  <input type="hidden" name="optr" value="<%=strOptrClearVisitRecord%>" />
-  <input type="hidden" name="cond" value="<%=strSQLCondStr%>" />
-  <input type="submit" value="删除访问记录" />
+  <input type="hidden" name="optr" value="<%=strOptrExportMACPermTable%>" />
+  <input type="submit" value="导出MAC授权表" />
 </form>
 </td>
 </tr>

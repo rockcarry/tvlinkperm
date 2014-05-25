@@ -33,7 +33,9 @@
     case strOptrClearVisitRecord
         ClearVisitRecord()
     case strOptrExportVisitRecord
-        ExportVisitRecord()
+        ExportVisitRecord strExpVisitRecord, "SELECT * FROM VisitRecordTable" & Request.Form("cond")
+    case strOptrExportMACPermTable
+        ExportVisitRecord strExpMacPermTab, "SELECT * FROM PermittedMACTable"
     case strOptrTablePageSubmit
         HandleTablePageSubmit()
     end select
@@ -158,14 +160,13 @@
         conn.Execute("DELETE FROM VisitRecordTable" & Request.Form("cond"))
     end sub
 
-    sub ExportVisitRecord()
-        dim fs, txt, rs, sql, x, line
+    sub ExportVisitRecord(file, sql)
+        dim fs, txt, rs, x, line
 
         set fs = Server.CreateObject("Scripting.FileSystemObject")
-        set txt= fs.OpenTextFile(Server.MapPath(strExpVisitRecord), 2, true)
+        set txt= fs.OpenTextFile(Server.MapPath(file), 2, true)
         set rs = Server.CreateObject("ADODB.recordset")
 
-        sql = "SELECT * FROM VisitRecordTable" & Request.Form("cond")
         rs.Open sql, conn
 
         do while not rs.EOF
@@ -183,7 +184,7 @@
         set txt= nothing
         set fs = nothing
 
-        strRedirectTo = strExpVisitRecord
+        strRedirectTo = file
     end sub
 
     sub HandleTablePageSubmit()

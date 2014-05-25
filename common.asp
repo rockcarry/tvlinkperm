@@ -8,6 +8,7 @@
     dim strAdminPageName
     dim strLoginPageName
     dim strExpVisitRecord
+    dim strExpMacPermTab
     dim bSaveVisitRecord
     dim nDataBaseType
     dim nWriteOutType
@@ -21,6 +22,7 @@
     strAdminPageName  = "admin.asp"
     strLoginPageName  = "login.asp"
     strExpVisitRecord = "export_visit_rule.txt"
+    strExpMacPermTab  = "export_mac_permmit.txt"
     bSaveVisitRecord  = true
     nDataBaseType     = 2
     nWriteOutType     = 1
@@ -96,7 +98,7 @@
     dim strOptrExportVisitRecord
     dim strOptrVisitRecordCond
     dim strOptrTablePageSubmit
-
+    dim strOptrExportMACPermTable
 
     strOptrCur                = Request("optr")
     strOptrAdminLogin         = "1"
@@ -115,6 +117,6 @@
     strOptrExportVisitRecord  = "e"
     strOptrVisitRecordCond    = "f"
     strOptrTablePageSubmit    = "g"
-
+    strOptrExportMACPermTable = "h"
 %>
 
