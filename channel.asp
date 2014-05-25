@@ -26,7 +26,7 @@
     iVisitPermitted = GetPermissionByIPMAC(strIPAddress, strMACAddress)
 
     if iVisitPermitted = -1 then
-        If strIPLocation = "China" then
+        If strIPLocation = strChinaCode then
             iVisitPermitted = 0
         else
             iVisitPermitted = 1
