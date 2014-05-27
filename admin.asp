@@ -327,7 +327,7 @@ end if
         end if
     end function
 
-    strSQLCondStr = " WHERE true"
+    strSQLCondStr = " WHERE 1=1"
     strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitLocation", strQueryCondCountryCode)
     strSQLCondStr = strSQLCondStr & MakeQueryStr0("IP" , strQueryCondIPValue )
     strSQLCondStr = strSQLCondStr & MakeQueryStr0("MAC", strQueryCondMACValue)

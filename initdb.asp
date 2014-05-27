@@ -81,8 +81,8 @@
         for each x in sql
             conn.Execute(x)
         next
-        conn.Execute("CREATE INDEX IPIndex ON IPLocationTable(NUM_IP_START, NUM_IP_END)")
-        conn.Execute("CREATE INDEX MACIndex ON PermittedMACTable(MAC)")
+'       conn.Execute("CREATE INDEX IPIndex ON IPLocationTable(NUM_IP_START, NUM_IP_END)")
+'       conn.Execute("CREATE INDEX MACIndex ON PermittedMACTable(MAC)")
     end sub
 
     sub DeleteSystemTables()
