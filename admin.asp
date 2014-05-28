@@ -10,7 +10,7 @@
 <%
     dim tabVisitRuleTable(9)
     tabVisitRuleTable(0) = "tabVisitRuleTable"
-    tabVisitRuleTable(1) = "80%"
+    tabVisitRuleTable(1) = "85%"
     tabVisitRuleTable(2) = strAdminPageName
     tabVisitRuleTable(3) = "submit.asp"
     tabVisitRuleTable(4) = "编号"
@@ -20,9 +20,9 @@
     tabVisitRuleTable(8) = "访问权限"
     tabVisitRuleTable(9) = "管理"
 
-    dim tabVisitRecordTable(11)
+    dim tabVisitRecordTable(12)
     tabVisitRecordTable(0)  = "tabVisitRuleRecord"
-    tabVisitRecordTable(1)  = "80%"
+    tabVisitRecordTable(1)  = "85%"
     tabVisitRecordTable(2)  = strAdminPageName
     tabVisitRecordTable(3)  = "submit.asp"
     tabVisitRecordTable(4)  = "编号"
@@ -32,7 +32,17 @@
     tabVisitRecordTable(8)  = "最后访问"
     tabVisitRecordTable(9)  = "访问权限"
     tabVisitRecordTable(10) = "位置信息"
-    tabVisitRecordTable(11) = "管理"
+    tabVisitRecordTable(11) = "MAC 授权"
+    tabVisitRecordTable(12) = "管理"
+
+    dim tabOneIPMultiMac(6)
+    tabOneIPMultiMac(0) = "tabOneIPMultiMac"
+    tabOneIPMultiMac(1) = "85%"
+    tabOneIPMultiMac(2) = strAdminPageName
+    tabOneIPMultiMac(3) = "submit.asp"
+    tabOneIPMultiMac(4) = "IP"
+    tabOneIPMultiMac(5) = "MAC 总个数"
+    tabOneIPMultiMac(6) = "访问总计数"
 
     function MakePageTableItemAdminStr(name, id)
         dim str
@@ -54,18 +64,6 @@
         MakePageLinkString = MakePageLinkString & "name=" & table(0) & "&page=" & page & "&"
         MakePageLinkString = MakePageLinkString & "disp=" & table(2)
         MakePageLinkString = MakePageLinkString & """>" & link & "</a>"
-    end function
-
-    function CheckMACPermitted(mac)
-        dim rs, sql
-        set rs = Server.CreateObject("ADODB.recordset")
-        sql = "SELECT * FROM PermittedMACTable WHERE MAC='" & mac & "'"
-        rs.Open sql, conn
-        if rs.EOF then
-            CheckMACPermitted = false
-        else
-            CheckMACPermitted = true
-        end if
     end function
 
     'table(0) - name
@@ -98,14 +96,10 @@
 
         for i=1 to rs.PageSize
             if not rs.EOF then
+                color = ""
                 if table(0) = tabVisitRecordTable(0) then
-                    color = ""
-                    if nVisitRecordQueryCond = 4 then
-                        color = "bgcolor=""#ff8888"""
-                    else
-                        if not CheckMACPermitted(rs("MAC")) then
-                            color = " bgcolor=""#ff8888"""
-                        end if
+                    if isnull(rs(7)) then
+                        color = " bgcolor=""#ff8888"""
                     end if
                 end if
 
@@ -113,7 +107,11 @@
                 for each x in rs.Fields
                     Response.Write("<td>" & x.value & "</td>")
                 next
-                Response.Write("<td>" & MakePageTableItemAdminStr(table(0), rs("ID")) & "</td>")
+
+                if table(0) <> tabOneIPMultiMac(0) then
+                    Response.Write("<td>" & MakePageTableItemAdminStr(table(0), rs(0)) & "</td>")
+                end if
+
                 Response.Write("</tr>" & vbcrlf)
                 rs.MoveNext()
             else
@@ -145,14 +143,6 @@
     strVisitRecordQueryText(3) = "当日访问记录"
     strVisitRecordQueryText(4) = "未授权MAC记录"
     strVisitRecordQueryText(5) = "已授权MAC记录"
-
-    dim nVisitRecordQueryCond
-    nVisitRecordQueryCond = Request.Cookies(tabVisitRecordTable(0))("cond")
-    if nVisitRecordQueryCond = "" then
-        nVisitRecordQueryCond = 0
-    else
-        nVisitRecordQueryCond = cint(nVisitRecordQueryCond)
-    end if
 
     sub DisplayQueryOptions(name, opts, sel)
         dim str, i
@@ -230,6 +220,7 @@
     dim strQueryCondsVisitPerm(2)
     dim strQueryCondsMACPerm(2)
     dim strQueryCondsSortType(4)
+    dim strQueryCondOneIPMultiMac
     dim strQueryCondCountryCode
     dim strQueryCondIPValue
     dim strQueryCondMACValue
@@ -263,6 +254,7 @@
     strQueryCondsSortType(3)   = "访问计数+"
     strQueryCondsSortType(4)   = "访问计数-"
 
+    strQueryCondOneIPMultiMac= Request.Cookies("query_cond")("oneipmultimac")
     strQueryCondCountryCode  = Request.Cookies("query_cond")("country_code")
     strQueryCondIPValue      = Request.Cookies("query_cond")("ip_value")
     strQueryCondMACValue     = Request.Cookies("query_cond")("mac_value")
@@ -336,28 +328,40 @@ end if
     strSQLCondStr = strSQLCondStr & strSQLMACPerm(nQueryCondMACPermValue)
 %>
 
-<form action="submit.asp" method="post">
-  <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
-  <table>
-    <tr><td>国家代码</td><td>IP</td><td>MAC</td><td>访问时间</td><td>访问权限</td><td>MAC授权</td><td>排序方式</td><td></td></tr>
-    <tr>
-      <td><input name="country_code" type="text" value="<%=strQueryCondCountryCode%>" size="8" /></td>
-      <td><input name="ip_value"     type="text" value="<%=strQueryCondIPValue    %>" size="17"/></td>
-      <td><input name="mac_value"    type="text" value="<%=strQueryCondMACValue   %>" size="17"/></td>
-      <td><% DisplayQueryOptions "visit_time", strQueryCondsVisitTime, nQueryCondVisitTimeValue %></td>
-      <td><% DisplayQueryOptions "visit_perm", strQueryCondsVisitPerm, nQueryCondVisitPermValue %></td>
-      <td><% DisplayQueryOptions "mac_perm"  , strQueryCondsMACPerm  , nQueryCondMACPermValue   %></td>
-      <td><% DisplayQueryOptions "sort_type" , strQueryCondsSortType , nQueryCondSortTypeValue  %></td>
-      <td><input type="submit" value="查询"/></td>
-    </tr>
-  </table>
-</form>
+<table>
+  <tr><td>国家代码</td><td>IP</td><td>MAC</td><td>访问时间</td><td>访问权限</td><td>MAC授权</td><td>排序方式</td><td></td><td></td></tr>
+  <tr>
+    <form action="submit.asp" method="post">
+    <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
+    <input type="hidden" name="oneipmultimac" value="0" />
+    <td><input name="country_code" type="text" value="<%=strQueryCondCountryCode%>" size="8" /></td>
+    <td><input name="ip_value"     type="text" value="<%=strQueryCondIPValue    %>" size="17"/></td>
+    <td><input name="mac_value"    type="text" value="<%=strQueryCondMACValue   %>" size="17"/></td>
+    <td><% DisplayQueryOptions "visit_time", strQueryCondsVisitTime, nQueryCondVisitTimeValue %></td>
+    <td><% DisplayQueryOptions "visit_perm", strQueryCondsVisitPerm, nQueryCondVisitPermValue %></td>
+    <td><% DisplayQueryOptions "mac_perm"  , strQueryCondsMACPerm  , nQueryCondMACPermValue   %></td>
+    <td><% DisplayQueryOptions "sort_type" , strQueryCondsSortType , nQueryCondSortTypeValue  %></td>
+    <td><input type="submit" value="查询"/></td>
+    </form>
+
+    <form action="submit.asp" method="post">
+    <input type="hidden" name="oneipmultimac" value="1" />
+    <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
+    <td><input type="submit" value="单IP多MAC"/></td>
+    </form>
+  </tr>
+</table>
 
 <%
     dim strSQLVisitRecord
-    strSQLVisitRecord = "SELECT * FROM VisitRecordTable"
+    strSQLVisitRecord = "SELECT VisitRecordTable.*, PermittedMACTable.ID FROM VisitRecordTable LEFT JOIN PermittedMACTable ON VisitRecordTable.MAC=PermittedMACTable.MAC"
     strSQLVisitRecord = strSQLVisitRecord & strSQLCondStr & strSQLSortType(nQueryCondSortTypeValue)
-    DisplayTableByPage tabVisitRecordTable, strSQLVisitRecord
+
+    if strQueryCondOneIPMultiMac <> "1" then
+        DisplayTableByPage tabVisitRecordTable, strSQLVisitRecord
+    else
+        DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1"
+    end if
 %>
 <br/>总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.<br/></br>
 <table>

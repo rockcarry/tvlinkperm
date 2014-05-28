@@ -147,6 +147,7 @@
     end sub
 
     sub VisitRecordCondQuery()
+        Response.Cookies("query_cond")("oneipmultimac")= Request.Form("oneipmultimac")
         Response.Cookies("query_cond")("country_code") = Request.Form("country_code")
         Response.Cookies("query_cond")("ip_value")     = Request.Form("ip_value")
         Response.Cookies("query_cond")("mac_value")    = Request.Form("mac_value")
