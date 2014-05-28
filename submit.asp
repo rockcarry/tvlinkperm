@@ -36,6 +36,8 @@
         ExportVisitRecord strExpVisitRecord, "SELECT * FROM VisitRecordTable" & Request.Form("cond")
     case strOptrExportMACPermTable
         ExportVisitRecord strExpMacPermTab, "SELECT * FROM PermittedMACTable"
+    case strOptrAutoPermitMAC
+        HandleAutoPermitMAC()
     case strOptrTablePageSubmit
         HandleTablePageSubmit()
     end select
@@ -186,6 +188,10 @@
         set fs = nothing
 
         strRedirectTo = file
+    end sub
+
+    sub HandleAutoPermitMAC()
+        conn.Execute("INSERT INTO PermittedMACTable SELECT DISTINCT MAC FROM VisitRecordTable WHERE VisitPermission=1 AND NOT EXISTS (SELECT NULL FROM PermittedMACTable WHERE VisitRecordTable.MAC=PermittedMACTable.MAC)")
     end sub
 
     sub HandleTablePageSubmit()

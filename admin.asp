@@ -386,6 +386,12 @@ end if
   <input type="submit" value="导出MAC授权表" />
 </form>
 </td>
+<td>
+<form action="submit.asp" method="post">
+  <input type="hidden" name="optr" value="<%=strOptrAutoPermitMAC%>" />
+  <input type="submit" value="为有访问权限但未授权的MAC授权" />
+</form>
+</td>
 </tr>
 </table>
 

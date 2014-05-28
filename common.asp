@@ -99,6 +99,7 @@
     dim strOptrVisitRecordCond
     dim strOptrTablePageSubmit
     dim strOptrExportMACPermTable
+    dim strOptrAutoPermitMAC
 
     strOptrCur                = Request("optr")
     strOptrAdminLogin         = "1"
@@ -118,5 +119,6 @@
     strOptrVisitRecordCond    = "f"
     strOptrTablePageSubmit    = "g"
     strOptrExportMACPermTable = "h"
+    strOptrAutoPermitMAC      = "i"
 %>
 
