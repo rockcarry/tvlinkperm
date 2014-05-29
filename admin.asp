@@ -92,7 +92,7 @@
 
         for i=1 to rs.PageSize
             if not rs.EOF then
-                if (i mod 2) = 0 then
+                if (i mod 2) = 1 then
                     color = " class=""alt"""
                 else
                     color = ""
