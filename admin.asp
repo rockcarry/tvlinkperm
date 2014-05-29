@@ -5,6 +5,7 @@
         Response.Redirect(strLoginPageName)
         Response.End()
     end if
+    Response.CacheControl = "no-cache"
 %>
 
 <%
