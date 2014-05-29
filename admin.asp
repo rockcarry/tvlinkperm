@@ -68,13 +68,12 @@
     'table(2) - submit page
     'table(3) - title
     sub DisplayTableByPage(table, sql)
-        dim rs, x, i, min, max, page, color
+        dim rs, x, i, min, max, page, color, str
 
         set rs = Server.CreateObject("ADODB.recordset")
         rs.Open sql, conn, 1
 
-        Response.Write("<table id=""datatab"" width=""" & table(1) & """>" & vbcrlf)
-        Response.Write("<tr>")
+        Response.Write("<table id=""datatab"" width=""" & table(1) & """>" & "<tr>")
         for i=3 to ubound(table)
             Response.Write("<th>" & table(i) & "</th>")
         next
@@ -82,29 +81,20 @@
 
         rs.PageSize = nTablePageSize
         page = Request.Cookies(table(0))("page")
-        if page = "" then page = "0"
-        page = cint(page)
+        if page = "" then page = 0 else page = cint(page)
         if page > rs.PageCount then page = rs.PageCount
         if page < 1 then page = 1
-        if not rs.EOF then
-            rs.AbsolutePage = page
-        end if
+        if not rs.EOF then rs.AbsolutePage = page
 
         for i=1 to rs.PageSize
             if not rs.EOF then
-                if (i mod 2) = 1 then
-                    color = " class=""alt"""
-                else
-                    color = ""
-                end if
+                if (i mod 2) = 1 then color = " class=""alt""" else color = ""
 
                 if table(0) = tabVisitRecordTable(0) then
-                    if isnull(rs(7)) then
-                        color = " class=""warn"""
-                    end if
+                    if isnull(rs(7)) then color = " class=""warn"""
                 end if
 
-                Response.Write("<tr" & color & ">" & vbcrlf)
+                Response.Write("<tr" & color & ">")
                 for each x in rs.Fields
                     Response.Write("<td>" & x.value & "</td>")
                 next
@@ -119,27 +109,43 @@
                 exit for
             end if
         next
-
         Response.Write("</table>" & vbcrlf)
-        Response.Write("total:" & rs.RecordCount & " ")
-        Response.Write("page:" & page & "/" & rs.PageCount & " ")
-        Response.Write(MakePageLinkString(table, 1,            "首页", false))
-        Response.Write(MakePageLinkString(table, page - 1,     "上页", false))
-        Response.Write(MakePageLinkString(table, page + 1,     "下页", false))
-        Response.Write(MakePageLinkString(table, rs.PageCount, "尾页", false))
 
-        min = page - 5
+        min = page - 7
         if min < 1 then min = 1
-        max = min + 10
+        max = min + 14
         if max > rs.PageCount then
             max = rs.PageCount
-            min = max - 10
+            min = max - 14
             if min < 1 then min = 1
         end if
 
-        for i=min to max
-            Response.Write(MakePageLinkString(table, i, cstr(i), i=page))
-        next
+        Response.Write("<table><tr><td>")
+        Response.Write("total:" & rs.RecordCount & " " & "page:" & page & "/" & rs.PageCount & " ")
+        if max-min > 0 then
+            str =       MakePageLinkString(table, 1,            "首页", false)
+            str = str & MakePageLinkString(table, page - 1,     "上页", false)
+            str = str & MakePageLinkString(table, page + 1,     "下页", false)
+            str = str & MakePageLinkString(table, rs.PageCount, "尾页", false)
+            Response.Write(str)
+
+            for i=min to max
+                Response.Write(MakePageLinkString(table, i, cstr(i), i=page))
+            next
+        end if
+        Response.Write("</td>")
+
+        Response.Write("<td>")
+        if rs.PageCount > 15 then
+            str = "<form action=""submit.asp"" method=""post"">"
+            str = str & "<input name=""optr"" type=""hidden"" value=""" & strOptrTablePageSubmit & """/>"
+            str = str & "<input name=""name"" type=""hidden"" value=""" & table(0) & """/>"
+            str = str & "<input name=""page"" type=""text"" size=""3"" value=""" & page & """/>"
+            str = str & "<input type=""submit"" value=""GO""/>"
+            str = str & "</form>"
+            Response.Write(str)
+        end if
+        Response.Write("</td></tr></table>")
 
         rs.Close()
         set rs = nothing
@@ -204,7 +210,6 @@
 
 <h2>访问规则</h2>
 <% DisplayTableByPage tabVisitRuleTable, "SELECT * FROM VisitRuleTable" %>
-<br/><br/>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrAddVisitRule%>" />
   <table>
@@ -214,8 +219,8 @@
     <tr>
       <td>权限:</td>
       <td>
-        <input type="radio"  name="perm" value="1" />allowed
-        <input type="radio"  name="perm" value="0" checked="checked" />forbidden
+        <input type="radio" name="perm" value="1" />allowed
+        <input type="radio" name="perm" value="0" checked="checked" />forbidden
       </td>
     </tr>
     <tr><td></td><td><input type="submit" value="添加访问规则" /></td></tr>
@@ -256,11 +261,11 @@
     strQueryCondsMACPerm(1)   = "已授权"
     strQueryCondsMACPerm(2)   = "未授权"
 
-    strQueryCondsSortType(0)   = "默认方式"
-    strQueryCondsSortType(1)   = "访问时间+"
-    strQueryCondsSortType(2)   = "访问时间-"
-    strQueryCondsSortType(3)   = "访问计数+"
-    strQueryCondsSortType(4)   = "访问计数-"
+    strQueryCondsSortType(0)  = "默认方式"
+    strQueryCondsSortType(1)  = "访问时间+"
+    strQueryCondsSortType(2)  = "访问时间-"
+    strQueryCondsSortType(3)  = "访问计数+"
+    strQueryCondsSortType(4)  = "访问计数-"
 
     strQueryCondOneIPMultiMac= Request.Cookies("query_cond")("oneipmultimac")
     strQueryCondCountryCode  = Request.Cookies("query_cond")("country_code")
@@ -366,7 +371,7 @@ end if
         DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1 ORDER BY count(MAC), sum(VisitCounter) DESC"
     end if
 %>
-<br/>总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.<br/></br>
+总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.
 
 <table>
 <tr>

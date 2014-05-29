@@ -21,7 +21,7 @@ a:active  { text-decoration:underline; }
 #datatab td
 {
     font-size:1.0em;
-//  border:1px solid #333388;
+    border:1px solid #333388;
     text-align:center;
 }
 
