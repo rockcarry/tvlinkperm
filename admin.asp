@@ -8,30 +8,30 @@
 %>
 
 <%
-    dim tabVisitRuleTable(8)
-    tabVisitRuleTable(0) = "tabVisitRuleTable"
-    tabVisitRuleTable(1) = "90%"
-    tabVisitRuleTable(2) = "submit.asp"
-    tabVisitRuleTable(3) = "编号"
-    tabVisitRuleTable(4) = "IP 地址"
-    tabVisitRuleTable(5) = "MAC 地址"
-    tabVisitRuleTable(6) = "备注"
-    tabVisitRuleTable(7) = "访问权限"
-    tabVisitRuleTable(8) = "管理"
+    dim tabVisitRule(8)
+    tabVisitRule(0) = "tabVisitRule"
+    tabVisitRule(1) = "90%"
+    tabVisitRule(2) = "submit.asp"
+    tabVisitRule(3) = "编号"
+    tabVisitRule(4) = "IP 地址"
+    tabVisitRule(5) = "MAC 地址"
+    tabVisitRule(6) = "备注"
+    tabVisitRule(7) = "访问权限"
+    tabVisitRule(8) = "管理"
 
-    dim tabVisitRecordTable(11)
-    tabVisitRecordTable(0)  = "tabVisitRuleRecord"
-    tabVisitRecordTable(1)  = "90%"
-    tabVisitRecordTable(2)  = "submit.asp"
-    tabVisitRecordTable(3)  = "编号"
-    tabVisitRecordTable(4)  = "IP 地址"
-    tabVisitRecordTable(5)  = "MAC 地址"
-    tabVisitRecordTable(6)  = "访问计数"
-    tabVisitRecordTable(7)  = "最后访问"
-    tabVisitRecordTable(8)  = "访问权限"
-    tabVisitRecordTable(9)  = "位置信息"
-    tabVisitRecordTable(10) = "MAC 授权"
-    tabVisitRecordTable(11) = "管理"
+    dim tabVisitRecord(11)
+    tabVisitRecord(0)  = "tabVisitRecord"
+    tabVisitRecord(1)  = "90%"
+    tabVisitRecord(2)  = "submit.asp"
+    tabVisitRecord(3)  = "编号"
+    tabVisitRecord(4)  = "IP 地址"
+    tabVisitRecord(5)  = "MAC 地址"
+    tabVisitRecord(6)  = "访问计数"
+    tabVisitRecord(7)  = "最后访问"
+    tabVisitRecord(8)  = "访问权限"
+    tabVisitRecord(9)  = "位置信息"
+    tabVisitRecord(10) = "MAC 授权"
+    tabVisitRecord(11) = "管理"
 
     dim tabOneIPMultiMac(5)
     tabOneIPMultiMac(0) = "tabOneIPMultiMac"
@@ -44,12 +44,12 @@
     function MakePageTableItemAdminStr(name, id)
         dim str
         select case name
-        case tabVisitRuleTable(0)
+        case tabVisitRule(0)
             str = "<a href=""submit.asp?optr=" & strOptrDeleteVisitRule
             str = str & "&id=" & id & """>删除</a>&nbsp"
             str = str & "<a href=""submit.asp?optr=" & strOptrModifyVisitRulePage
             str = str & "&id=" & id & """>修改</a>"
-        case tabVisitRecordTable(0)
+        case tabVisitRecord(0)
             str = "<a href=""submit.asp?optr=" & strOptrDeleteVisitRecord
             str = str & "&id=" & id & """>删除</a>"
         end select
@@ -90,7 +90,7 @@
             if not rs.EOF then
                 if (i mod 2) = 1 then color = " class=""alt""" else color = ""
 
-                if table(0) = tabVisitRecordTable(0) then
+                if table(0) = tabVisitRecord(0) then
                     if isnull(rs(7)) then color = " class=""warn"""
                 end if
 
@@ -209,7 +209,7 @@
 <hr/>
 
 <h2>访问规则</h2>
-<% DisplayTableByPage tabVisitRuleTable, "SELECT * FROM VisitRuleTable" %>
+<% DisplayTableByPage tabVisitRule, "SELECT * FROM VisitRuleTable" %>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrAddVisitRule%>" />
   <table>
@@ -342,6 +342,7 @@ end if
     <form action="submit.asp" method="post">
     <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
     <input type="hidden" name="oneipmultimac" value="0" />
+    <input type="hidden" name="tabname" value="<%=tabVisitRecord(0)%>" />
     <td><input name="country_code" type="text" value="<%=strQueryCondCountryCode%>" size="8" /></td>
     <td><input name="ip_value"     type="text" value="<%=strQueryCondIPValue    %>" size="17"/></td>
     <td><input name="mac_value"    type="text" value="<%=strQueryCondMACValue   %>" size="17"/></td>
@@ -353,8 +354,9 @@ end if
     </form>
 
     <form action="submit.asp" method="post">
-    <input type="hidden" name="oneipmultimac" value="1" />
     <input type="hidden" name="optr" value="<%=strOptrVisitRecordCond%>" />
+    <input type="hidden" name="oneipmultimac" value="1" />
+    <input type="hidden" name="tabname" value="<%=tabOneIPMultiMac(0)%>" />
     <td><input type="submit" value="单IP多MAC"/></td>
     </form>
   </tr>
@@ -366,7 +368,7 @@ end if
     strSQLVisitRecord = strSQLVisitRecord & strSQLCondStr & strSQLSortType(nQueryCondSortTypeValue)
 
     if strQueryCondOneIPMultiMac <> "1" then
-        DisplayTableByPage tabVisitRecordTable, strSQLVisitRecord
+        DisplayTableByPage tabVisitRecord, strSQLVisitRecord
     else
         DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1 ORDER BY count(MAC), sum(VisitCounter) DESC"
     end if

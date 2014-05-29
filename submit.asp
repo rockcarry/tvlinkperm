@@ -157,6 +157,7 @@
         Response.Cookies("query_cond")("visit_perm")   = Request.Form("visit_perm")
         Response.Cookies("query_cond")("mac_perm")     = Request.Form("mac_perm")
         Response.Cookies("query_cond")("sort_type")    = Request.Form("sort_type")
+        Response.Cookies(Request.Form("tabname"))("page") = "0"
     end sub
 
     sub ClearVisitRecord()
