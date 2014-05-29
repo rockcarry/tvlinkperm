@@ -195,10 +195,9 @@
     end sub
 
     sub HandleTablePageSubmit()
-        dim name, page, disp
+        dim name, page
         name = Request.QueryString("name")
         page = Request.QueryString("page")
-        disp = Request.QueryString("disp")
         Response.Cookies(name)("page") = page
     end sub
 %>

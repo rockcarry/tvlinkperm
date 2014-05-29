@@ -8,41 +8,38 @@
 %>
 
 <%
-    dim tabVisitRuleTable(9)
+    dim tabVisitRuleTable(8)
     tabVisitRuleTable(0) = "tabVisitRuleTable"
-    tabVisitRuleTable(1) = "85%"
-    tabVisitRuleTable(2) = strAdminPageName
-    tabVisitRuleTable(3) = "submit.asp"
-    tabVisitRuleTable(4) = "编号"
-    tabVisitRuleTable(5) = "IP 地址"
-    tabVisitRuleTable(6) = "MAC 地址"
-    tabVisitRuleTable(7) = "备注"
-    tabVisitRuleTable(8) = "访问权限"
-    tabVisitRuleTable(9) = "管理"
+    tabVisitRuleTable(1) = "90%"
+    tabVisitRuleTable(2) = "submit.asp"
+    tabVisitRuleTable(3) = "编号"
+    tabVisitRuleTable(4) = "IP 地址"
+    tabVisitRuleTable(5) = "MAC 地址"
+    tabVisitRuleTable(6) = "备注"
+    tabVisitRuleTable(7) = "访问权限"
+    tabVisitRuleTable(8) = "管理"
 
-    dim tabVisitRecordTable(12)
+    dim tabVisitRecordTable(11)
     tabVisitRecordTable(0)  = "tabVisitRuleRecord"
-    tabVisitRecordTable(1)  = "85%"
-    tabVisitRecordTable(2)  = strAdminPageName
-    tabVisitRecordTable(3)  = "submit.asp"
-    tabVisitRecordTable(4)  = "编号"
-    tabVisitRecordTable(5)  = "IP 地址"
-    tabVisitRecordTable(6)  = "MAC 地址"
-    tabVisitRecordTable(7)  = "访问计数"
-    tabVisitRecordTable(8)  = "最后访问"
-    tabVisitRecordTable(9)  = "访问权限"
-    tabVisitRecordTable(10) = "位置信息"
-    tabVisitRecordTable(11) = "MAC 授权"
-    tabVisitRecordTable(12) = "管理"
+    tabVisitRecordTable(1)  = "90%"
+    tabVisitRecordTable(2)  = "submit.asp"
+    tabVisitRecordTable(3)  = "编号"
+    tabVisitRecordTable(4)  = "IP 地址"
+    tabVisitRecordTable(5)  = "MAC 地址"
+    tabVisitRecordTable(6)  = "访问计数"
+    tabVisitRecordTable(7)  = "最后访问"
+    tabVisitRecordTable(8)  = "访问权限"
+    tabVisitRecordTable(9)  = "位置信息"
+    tabVisitRecordTable(10) = "MAC 授权"
+    tabVisitRecordTable(11) = "管理"
 
-    dim tabOneIPMultiMac(6)
+    dim tabOneIPMultiMac(5)
     tabOneIPMultiMac(0) = "tabOneIPMultiMac"
-    tabOneIPMultiMac(1) = "85%"
-    tabOneIPMultiMac(2) = strAdminPageName
-    tabOneIPMultiMac(3) = "submit.asp"
-    tabOneIPMultiMac(4) = "IP"
-    tabOneIPMultiMac(5) = "MAC 总个数"
-    tabOneIPMultiMac(6) = "访问总计数"
+    tabOneIPMultiMac(1) = "90%"
+    tabOneIPMultiMac(2) = "submit.asp"
+    tabOneIPMultiMac(3) = "IP"
+    tabOneIPMultiMac(4) = "MAC 总个数"
+    tabOneIPMultiMac(5) = "访问总计数"
 
     function MakePageTableItemAdminStr(name, id)
         dim str
@@ -59,27 +56,26 @@
         MakePageTableItemAdminStr = str
     end function
 
-    function MakePageLinkString(table, page, link)
-        MakePageLinkString = "<a href=""" & table(3) & "?optr=" & strOptrTablePageSubmit & "&"
-        MakePageLinkString = MakePageLinkString & "name=" & table(0) & "&page=" & page & "&"
-        MakePageLinkString = MakePageLinkString & "disp=" & table(2)
-        MakePageLinkString = MakePageLinkString & """>" & link & "</a>"
+    function MakePageLinkString(table, page, link, flag)
+        if flag then link = "<u>" & link & "</u>"
+        MakePageLinkString = "<a href=""" & table(2) & "?optr=" & strOptrTablePageSubmit & "&"
+        MakePageLinkString = MakePageLinkString & "name=" & table(0) & "&page=" & page
+        MakePageLinkString = MakePageLinkString & """>" & link & "</a>&nbsp;"
     end function
 
     'table(0) - name
     'table(1) - width
-    'table(2) - display page
-    'table(3) - submit page
-    'table(4) - title
+    'table(2) - submit page
+    'table(3) - title
     sub DisplayTableByPage(table, sql)
-        dim rs, x, i, page, color
+        dim rs, x, i, min, max, page, color
 
         set rs = Server.CreateObject("ADODB.recordset")
         rs.Open sql, conn, 1
 
-        Response.Write("<table border=""1"" width=""" & table(1) & """>" & vbcrlf)
+        Response.Write("<table id=""datatab"" width=""" & table(1) & """>" & vbcrlf)
         Response.Write("<tr>")
-        for i=4 to ubound(table)
+        for i=3 to ubound(table)
             Response.Write("<th>" & table(i) & "</th>")
         next
         Response.Write("</tr>" & vbcrlf)
@@ -96,14 +92,19 @@
 
         for i=1 to rs.PageSize
             if not rs.EOF then
-                color = ""
+                if (i mod 2) = 0 then
+                    color = " class=""alt"""
+                else
+                    color = ""
+                end if
+
                 if table(0) = tabVisitRecordTable(0) then
                     if isnull(rs(7)) then
-                        color = " bgcolor=""#ff8888"""
+                        color = " class=""warn"""
                     end if
                 end if
 
-                Response.Write("<tr align=""center""" & color & ">" & vbcrlf)
+                Response.Write("<tr" & color & ">" & vbcrlf)
                 for each x in rs.Fields
                     Response.Write("<td>" & x.value & "</td>")
                 next
@@ -120,16 +121,24 @@
         next
 
         Response.Write("</table>" & vbcrlf)
-        Response.Write("total: " & rs.RecordCount & " ")
-        Response.Write("page: " & page & "/" & rs.PageCount & " ")
-        Response.Write(MakePageLinkString(table, 1,            " 首页 "))
-        Response.Write(MakePageLinkString(table, page - 1,     " 上页 "))
-        Response.Write(MakePageLinkString(table, page + 1,     " 下页 "))
-        Response.Write(MakePageLinkString(table, rs.PageCount, " 尾页 "))
-        for i=page-10 to page+10
-            if i >= 1 and i <= rs.PageCount then
-                Response.Write(MakePageLinkString(table, i, " " & i & " "))
-            end if
+        Response.Write("total:" & rs.RecordCount & " ")
+        Response.Write("page:" & page & "/" & rs.PageCount & " ")
+        Response.Write(MakePageLinkString(table, 1,            "首页", false))
+        Response.Write(MakePageLinkString(table, page - 1,     "上页", false))
+        Response.Write(MakePageLinkString(table, page + 1,     "下页", false))
+        Response.Write(MakePageLinkString(table, rs.PageCount, "尾页", false))
+
+        min = page - 5
+        if min < 1 then min = 1
+        max = min + 10
+        if max > rs.PageCount then
+            max = rs.PageCount
+            min = max - 10
+            if min < 1 then min = 1
+        end if
+
+        for i=min to max
+            Response.Write(MakePageLinkString(table, i, cstr(i), i=page))
         next
 
         rs.Close()
@@ -175,6 +184,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
   <meta http-equiv="Content-Language" content="zh-cn" />
+  <link rel="stylesheet" type="text/css" href="tvlinkperm.css" />
   <title>管理页面</title>
 </head>
 
@@ -212,9 +222,7 @@
   </table>
 </form>
 
-
 <h2>访问记录</h2>
-
 <%
     dim strQueryCondsVisitTime(4)
     dim strQueryCondsVisitPerm(2)
@@ -302,11 +310,6 @@ end if
     strSQLSortType(3)  = " ORDER BY VisitCounter"
     strSQLSortType(4)  = " ORDER BY VisitCounter DESC"
 
-    strSQLCondStr = "WHERE VisitLocation='" & strQueryCondCountryCode & "'"
-    strSQLCondStr = strSQLCondStr & " AND IP='" & strQueryCondIPValue & "'"
-    strSQLCondStr = strSQLCondStr & " AND MAC='" & strQueryCondMACValue & "'"
-    strSQLCondStr = strSQLCondStr & "MAC='" & strQueryCondMACValue & "' AND "
-
     function MakeQueryStr0(section, str)
         if str <> "*" then
             if left(str, 1) = "!" then
@@ -320,9 +323,9 @@ end if
     end function
 
     strSQLCondStr = " WHERE 1=1"
-    strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitLocation", strQueryCondCountryCode)
-    strSQLCondStr = strSQLCondStr & MakeQueryStr0("IP" , strQueryCondIPValue )
-    strSQLCondStr = strSQLCondStr & MakeQueryStr0("MAC", strQueryCondMACValue)
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitRecordTable.VisitLocation", strQueryCondCountryCode)
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitRecordTable.IP" , strQueryCondIPValue )
+    strSQLCondStr = strSQLCondStr & MakeQueryStr0("VisitRecordTable.MAC", strQueryCondMACValue)
     strSQLCondStr = strSQLCondStr & strSQLVisitTime(nQueryCondVisitTimeValue)
     strSQLCondStr = strSQLCondStr & strSQLVisitPerm(nQueryCondVisitPermValue)
     strSQLCondStr = strSQLCondStr & strSQLMACPerm(nQueryCondMACPermValue)
@@ -360,12 +363,14 @@ end if
     if strQueryCondOneIPMultiMac <> "1" then
         DisplayTableByPage tabVisitRecordTable, strSQLVisitRecord
     else
-        DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1"
+        DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1 ORDER BY count(MAC), sum(VisitCounter) DESC"
     end if
 %>
 <br/>总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.<br/></br>
+
 <table>
 <tr>
+<% if strQueryCondOneIPMultiMac <> "1" then %>
 <td>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrClearVisitRecord%>" />
@@ -373,6 +378,7 @@ end if
   <input type="submit" value="删除访问记录" />
 </form>
 </td>
+<% end if %>
 <td>
 <form action="submit.asp" method="post">
   <input type="hidden" name="optr" value="<%=strOptrExportVisitRecord%>" />
