@@ -16,15 +16,15 @@ mactable.txt     mac 授权库 - 建议改为 *.asp 这样的名字更安全
 
 strChannelXmlPath = "channel.xml"   // 真实频道数据文件名
 strIPLocTableTxt  = "iptable.txt"   // ip 地址库文件，文本形式，可导入数据库来更新 IP 地址表
-strMACTableTxt    = "mac.txt"       // mac 授权库文件，文本形式，可导入数据库来更新 MAC 授权表
+strMACTableTxt    = "mactable.txt"  // mac 授权库文件，文本形式，可导入数据库来更新 MAC 授权表
 strAdminLoginPwd  = "www.tvbox.com" // 管理员登陆密码
 strAdminPageName  = "admin.asp"     // 管理页面名，如果修改了 admin.asp 的名称，需求修改这个
 strLoginPageName  = "login.asp"     // 管理页面名，如果修改了 login.asp 的名称，需求修改这个
 strExpVisitRecord = "export_visit_rule.txt"  // 导出访问记录保存的 txt 文件名
 strExpMacPermTab  = "export_mac_permmit.txt" // 导出 mac 授权表保存的 txt 文件名
 bSaveVisitRecord  = true            // 是否保存访问记录
-nDataBaseType     = 1               // 数据库类型，1-access, 2/3-sqlserver
-nWriteOutType     = 1               // 频道数据写出方式 1-write binary 方式，2-重定向方式
+nDataBaseType     = 1               // 数据库类型，1/2-access, 3/4-sqlserver
+nWriteOutType     = 1               // 频道数据写出方式 1-write binary 方式，2-重定向方式，3-缓冲方式
 nTablePageSize    = 10              // 每页显示的记录个数
 strChinaCode      = "China"         // 中国的国家代码，需要根据实际使用的 ip 库进行配置
 
