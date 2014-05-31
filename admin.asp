@@ -16,8 +16,8 @@
     tabVisitRule(3) = "编号"
     tabVisitRule(4) = "IP 地址"
     tabVisitRule(5) = "MAC 地址"
-    tabVisitRule(6) = "备注"
-    tabVisitRule(7) = "访问权限"
+    tabVisitRule(6) = "访问权限"
+    tabVisitRule(7) = "备注"
     tabVisitRule(8) = "管理"
 
     dim tabVisitRecord(11)

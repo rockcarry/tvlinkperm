@@ -68,13 +68,13 @@
         dim sql(3), x
         if nDataBaseType = 1 or nDataBaseType = 2 then
             sql(0) = "CREATE TABLE IPLocationTable(ID autoincrement primary key, NUM_IP_START float, NUM_IP_END float, STR_IP_START text(16), STR_IP_END text(16), LOCATION text(16))"
-            sql(1) = "CREATE TABLE VisitRuleTable(ID autoincrement primary key, IP text(16), MAC text(18), Remark text(64), VisitPermission int)"
+            sql(1) = "CREATE TABLE VisitRuleTable(ID autoincrement primary key, IP text(16), MAC text(18), VisitPermission int, Remark text(64))"
             sql(2) = "CREATE TABLE VisitRecordTable(ID autoincrement primary key, IP text(16), MAC text(18), VisitCounter int default 0, VisitLastTime datetime, VisitPermission int, VisitLocation text(16))"
             sql(3) = "CREATE TABLE PermittedMACTable(ID autoincrement primary key, MAC text(18))"
         end if
         if nDataBaseType = 3 or nDataBaseType = 4 then
             sql(0) = "CREATE TABLE IPLocationTable(ID int identity primary key, NUM_IP_START float, NUM_IP_END float, STR_IP_START nvarchar(16), STR_IP_END nvarchar(16), LOCATION nvarchar(16))"
-            sql(1) = "CREATE TABLE VisitRuleTable(ID int identity primary key, IP nvarchar(16), MAC nvarchar(18), Remark nvarchar(64), VisitPermission int)"
+            sql(1) = "CREATE TABLE VisitRuleTable(ID int identity primary key, IP nvarchar(16), MAC nvarchar(18), VisitPermission int, Remark nvarchar(64))"
             sql(2) = "CREATE TABLE VisitRecordTable(ID int identity primary key, IP nvarchar(16), MAC nvarchar(18), VisitCounter int default 0, VisitLastTime datetime, VisitPermission int, VisitLocation nvarchar(16))"
             sql(3) = "CREATE TABLE PermittedMACTable(ID int identity primary key, MAC nvarchar(18))"
         end if
