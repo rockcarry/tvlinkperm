@@ -1,5 +1,5 @@
 <!-- #include file ="common.asp" -->
-
+<% Response.CacheControl = "no-cache" %>
 <% OpenConn() %>
 
 <%
