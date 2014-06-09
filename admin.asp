@@ -291,15 +291,15 @@
 
     strSQLVisitTime(0) = ""
 if nDataBaseType = 1 or nDataBaseType = 2 then
-    strSQLVisitTime(1) = " AND DateDiff('d', VisitLastTime, Date()) = 0"
-    strSQLVisitTime(2) = " AND DateDiff('w', VisitLastTime, Date()) = 0"
-    strSQLVisitTime(3) = " AND DateDiff('m', VisitLastTime, Date()) = 0"
-    strSQLVisitTime(4) = " AND DateDiff('yyyy', VisitLastTime, Date()) = 0"
+    strSQLVisitTime(1) = " AND DateDiff('h', VisitLastTime, Date()) <= 24"
+    strSQLVisitTime(2) = " AND DateDiff('d', VisitLastTime, Date()) <= 7"
+    strSQLVisitTime(3) = " AND DateDiff('d', VisitLastTime, Date()) <= 30"
+    strSQLVisitTime(4) = " AND DateDiff('d', VisitLastTime, Date()) <= 365"
 else
-    strSQLVisitTime(1) = " AND DateDiff(day, VisitLastTime, GetDate()) = 0"
-    strSQLVisitTime(2) = " AND DateDiff(week, VisitLastTime, GetDate()) = 0"
-    strSQLVisitTime(3) = " AND DateDiff(month, VisitLastTime, GetDate()) = 0"
-    strSQLVisitTime(4) = " AND DateDiff(year, VisitLastTime, GetDate()) = 0"
+    strSQLVisitTime(1) = " AND DateDiff(hh , VisitLastTime, GetDate()) <= 24"
+    strSQLVisitTime(2) = " AND DateDiff(day, VisitLastTime, GetDate()) <= 7"
+    strSQLVisitTime(3) = " AND DateDiff(day, VisitLastTime, GetDate()) <= 30"
+    strSQLVisitTime(4) = " AND DateDiff(day, VisitLastTime, GetDate()) <= 365"
 end if
 
     strSQLVisitPerm(0) = ""
@@ -371,7 +371,7 @@ end if
     if strQueryCondOneIPMultiMac <> "1" then
         DisplayTableByPage tabVisitRecord, strSQLVisitRecord
     else
-        DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1 ORDER BY count(MAC), sum(VisitCounter) DESC"
+        DisplayTableByPage tabOneIPMultiMac, "SELECT IP, count(MAC), sum(VisitCounter) FROM VisitRecordTable GROUP BY IP HAVING count(MAC)>1 ORDER BY count(MAC) DESC, sum(VisitCounter) DESC"
     end if
 %>
 总共有 <%=GetDistinctMACNum(strSQLCondStr)%> 个不同的 MAC.
