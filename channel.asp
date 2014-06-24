@@ -80,13 +80,12 @@
         sql = sql & " OR mac = '" & mac & "' AND IP = '*' "
         sql = sql & " OR ip = '" & ip & "' AND MAC = '*' "
         sql = sql & " OR ip = '*' AND MAC = '*'"
-        sql = sql & "ORDER BY MAC, IP"
-        rs.Open sql, conn, 1
+        sql = sql & "ORDER BY MAC DESC, IP DESC"
+        rs.Open sql, conn
 
         if rs.EOF then
             GetPermissionByIPMAC = -1
         else
-            rs.MoveLast()
             GetPermissionByIPMAC = rs("VisitPermission")
         end if
 
