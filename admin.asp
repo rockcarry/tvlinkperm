@@ -249,7 +249,7 @@
     dim strSQLCondStr
 
     strQueryCondsVisitTime(0) = "*"
-    strQueryCondsVisitTime(1) = "一日内"
+    strQueryCondsVisitTime(1) = "24小时内"
     strQueryCondsVisitTime(2) = "一周内"
     strQueryCondsVisitTime(3) = "一月内"
     strQueryCondsVisitTime(4) = "一年内"
