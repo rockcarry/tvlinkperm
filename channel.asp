@@ -4,6 +4,7 @@
     dim strMACAddress
     dim strIPLocation
     dim iVisitPermitted
+    dim strXml
 
     strIPAddress    = "127.0.0.1"
     strMACAddress   = "00:00:00:00:00:00"
@@ -40,12 +41,18 @@
     'close connection
     CloseConn()
 
+    if strIPLocation = strUSACode then
+        strXml = strUSAChanXmlPath
+    else
+        strXml = strChannelXmlPath
+    end if
+
     if iVisitPermitted = 1 then
         select case nWriteOutType
         case 1
-            WriteOutBinaryFile(strChannelXmlPath)
+            WriteOutBinaryFile(strXml)
         case 2
-            Response.Redirect(strChannelXmlPath)
+            Response.Redirect(strXml)
         case 3
             WriteOutBinaryFileFromApplication()
         end select

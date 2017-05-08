@@ -5,14 +5,18 @@
 
 <%
     dim strChannelXmlPath
+    dim strUSAChanXmlPath
     dim bSaveVisitRecord
     dim nWriteOutType
     dim strChinaCode
+    dim strUSACode
 
     strChannelXmlPath = "channel.xml"
+    strUSAChanXmlPath = "usachan.xml"
     bSaveVisitRecord  = true
     nWriteOutType     = 1
     strChinaCode      = "China"
+    strUSACode        = "USA"
 
     dim nDataBaseType
     dim strAccessDBFile
@@ -153,6 +157,7 @@
     dim strMACAddress
     dim strIPLocation
     dim iVisitPermitted
+    dim strXml
 
     strIPAddress    = "127.0.0.1"
     strMACAddress   = "00:00:00:00:00:00"
@@ -190,19 +195,25 @@
     'close conn
     dbconn.Close()
 
+    if strIPLocation = strUSACode then
+        strXml = strUSAChanXmlPath
+    else
+        strXml = strChannelXmlPath
+    end if
+
     if iVisitPermitted = 1 then
         select case nWriteOutType
         case 1
             Response.ClearContent()
             Response.AppendHeader("Content-Disposition", "attachment;filename=channel.bin")
-            Response.TransmitFile(strChannelXmlPath)
+            Response.TransmitFile(strXml)
         case 2
             Response.ClearContent()
             Response.AppendHeader("Content-Disposition", "attachment;filename=channel.bin")
-            Response.WriteFile(strChannelXmlPath)
+            Response.WriteFile(strXml)
         case 3
             Response.ClearContent()
-            Response.Redirect(strChannelXmlPath)
+            Response.Redirect(strXml)
         end select
     end if
 %>

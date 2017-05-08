@@ -15,6 +15,7 @@ mactable.txt     mac 授权库 - 建议改为 *.asp 这样的名字更安全
 所有配置项都在 common.asp 中
 
 strChannelXmlPath = "channel.xml"   // 真实频道数据文件名
+strUSAChanXmlPath = "usachan.xml"   // 真实频道数据文件名（专门针对美国）
 strIPLocTableTxt  = "iptable.txt"   // ip 地址库文件，文本形式，可导入数据库来更新 IP 地址表
 strMACTableTxt    = "mactable.txt"  // mac 授权库文件，文本形式，可导入数据库来更新 MAC 授权表
 strAdminLoginPwd  = "www.tvbox.com" // 管理员登陆密码

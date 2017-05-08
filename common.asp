@@ -2,6 +2,7 @@
     option explicit
 
     dim strChannelXmlPath
+    dim strUSAChanXmlPath
     dim strIPLocTableTxt
     dim strMACTableTxt
     dim strAdminLoginPwd
@@ -14,8 +15,10 @@
     dim nWriteOutType
     dim nTablePageSize
     dim strChinaCode
+    dim strUSACode
 
     strChannelXmlPath = "channel.xml"
+    strUSAChanXmlPath = "usachan.xml"
     strIPLocTableTxt  = "iptable.txt"
     strMACTableTxt    = "mactable.txt"
     strAdminLoginPwd  = "www.tvbox.com"
@@ -27,7 +30,8 @@
     nDataBaseType     = 2
     nWriteOutType     = 1
     nTablePageSize    = 10
-    strChinaCode      = "China"
+    strChinaCode      = "CN"
+    strUSACode        = "USA"
 
     dim strAccessDBFile
     dim strAccessDBPWD

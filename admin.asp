@@ -156,7 +156,7 @@
     strVisitRecordQueryText(0) = "全部访问记录"
     strVisitRecordQueryText(1) = "国内访问记录"
     strVisitRecordQueryText(2) = "国外访问记录"
-    strVisitRecordQueryText(3) = "当日访问记录"
+    strVisitRecordQueryText(3) = "24小时访问记录"
     strVisitRecordQueryText(4) = "未授权MAC记录"
     strVisitRecordQueryText(5) = "已授权MAC记录"
 
@@ -249,7 +249,7 @@
     dim strSQLCondStr
 
     strQueryCondsVisitTime(0) = "*"
-    strQueryCondsVisitTime(1) = "24小时内"
+    strQueryCondsVisitTime(1) = "24小时"
     strQueryCondsVisitTime(2) = "一周内"
     strQueryCondsVisitTime(3) = "一月内"
     strQueryCondsVisitTime(4) = "一年内"
